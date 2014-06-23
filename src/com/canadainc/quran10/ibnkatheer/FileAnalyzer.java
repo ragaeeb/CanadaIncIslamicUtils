@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.canadainc.common.io.IOUtils;
+
 
 public class FileAnalyzer
 {
@@ -16,15 +18,9 @@ public class FileAnalyzer
 	private static final String TITLE_BODY_HTML = "<p><p>";
 	private static final String TAG_CLOSE_BODY = "</td>";
 
-	public static String readFile(String path, Charset encoding) throws IOException 
-	{
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return encoding.decode(ByteBuffer.wrap(encoded)).toString();
-	}
-
 	public VerseExplanation analyze(File f) throws IOException
 	{
-		String content = readFile( f.getPath(), StandardCharsets.UTF_8 );
+		String content = IOUtils.readFileUtf8(f);
 
 		int index = content.indexOf(TITLE_HEAD_HTML);
 		int end = content.indexOf(TAG_CLOSE_HEADER, index);

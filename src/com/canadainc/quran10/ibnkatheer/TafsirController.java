@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.canadainc.sunnah10.Sample;
-
 public class TafsirController
 {
 	public void run()
@@ -45,7 +43,7 @@ public class TafsirController
 		}
 		
 		try {
-			Sample.run(map);
+			IbnKatheerBoundary.run(map);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
