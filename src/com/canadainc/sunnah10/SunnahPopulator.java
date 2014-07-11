@@ -3,13 +3,11 @@ package com.canadainc.sunnah10;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.canadainc.common.io.IOUtils;
-import com.canadainc.quran10.ibnkatheer.FileAnalyzer;
 
 public class SunnahPopulator
 {
@@ -23,6 +21,8 @@ public class SunnahPopulator
 	{
 		File root = new File("res");
 		File[] collections = root.listFiles();
+		int total = 24;
+		int current = 0;
 
 		for (File f: collections)
 		{
@@ -52,7 +52,9 @@ public class SunnahPopulator
 							String content = IOUtils.readFileUtf8(chapter);
 							chapterContents.add(content);
 						}
-
+						
+						++current;
+						System.out.println(current+"/"+total);
 						SunnahBoundary sb = new SunnahBoundary(language, collectionName);
 						sb.createTable();
 						sb.populate(chapterContents);
@@ -60,12 +62,11 @@ public class SunnahPopulator
 				}
 			}
 		}
-
-		/*
-				String text = (String)json.get("hadithText");
-				text = Jsoup.parse(text).text();
-				text = text.replaceAll("\\(\\)", "(sallahu alayhi wa'sallam)");
-				h.text = text;
-		 */
+		
+		SunnahBoundary sb = new SunnahBoundary("arabic", "");
+		sb.vacuum();
+		
+		sb = new SunnahBoundary("english", "");
+		sb.vacuum();
 	}
 }
