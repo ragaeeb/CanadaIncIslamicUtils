@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,7 +22,7 @@ public class SunnahBoundary
 	private static Map<Integer, String> adabArabicChapterNames = new HashMap<Integer, String>();
 	private static Pattern chapterPattern = Pattern.compile("^Chapter \\d+\\.*\\s*\\w", Pattern.CASE_INSENSITIVE);
 	private String m_collection;
-	private Collection<String> m_columns;
+	private ArrayList<String> m_columns;
 	private Connection m_connection;
 	private Connection m_gradeConnection;
 	private DateFormat m_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -60,37 +61,82 @@ public class SunnahBoundary
 	}
 
 
-	public SunnahBoundary(String language, String collection) throws ClassNotFoundException, SQLException
+	public SunnahBoundary(String language, String collection) throws SQLException
 	{
 		m_language = language;
 		m_collection = collection;
 
-		File dbFile = new File("res/"+getTableName()+".db");
-
-		if ( dbFile.exists() ) {
-			//dbFile.delete();
-		}
-
-		Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
 		m_connection = DriverManager.getConnection("jdbc:sqlite:res/"+getTableName()+".db");
 		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/original_grades_"+language+".db");
 
 		m_columns = new ArrayList<String>();
 		m_columns.add("id INTEGER PRIMARY KEY");
 		m_columns.add("collection TEXT");
-		//m_columns.add("volumeNumber INTEGER");
-		m_columns.add("bookNumber INTEGER");
 		m_columns.add("bookName TEXT");
 		m_columns.add("babNumber INTEGER");
 		m_columns.add("babName TEXT");
 		m_columns.add("hadithNumber TEXT");
 		m_columns.add("hadithText TEXT");
 		m_columns.add("bookID INTEGER");
-		//m_columns.add("last_updated INTEGER");
 
 		if ( isNonArabicLanguage() ) {
 			m_columns.add("arabic_id INTEGER");
 		}
+	}
+	
+	
+	private void createIndices() throws SQLException
+	{
+		PreparedStatement ps;
+		
+		if ( isNonArabicLanguage() )
+		{
+			ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_arabic_id' ON 'narrations' ('arabic_id' ASC);");
+			ps.execute();
+			ps.close();
+		}
+		
+		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_collection' ON 'narrations' ('collection' ASC);");
+		ps.execute();
+		ps.close();
+		
+		ps = m_gradeConnection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_arabic_id' ON 'grades' ('arabic_id' ASC);");
+		ps.execute();
+		ps.close();
+		
+		ps = m_gradeConnection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_muhaddith_id' ON 'grades' ('m_id' ASC);");
+		ps.execute();
+		ps.close();
+	}
+	
+	
+	public void removeBookName() throws SQLException
+	{
+		m_columns.remove("bookName TEXT");
+		
+		PreparedStatement ps = m_connection.prepareStatement("ALTER TABLE narrations RENAME TO narrations_temp");
+		ps.execute();
+		ps.close();
+		
+		createTable();
+		
+		for (int i = 0; i < m_columns.size(); i++) {
+			String column = m_columns.get(i);
+			column = column.split(" ")[0];
+			m_columns.set(i, column);
+		}
+		
+		createIndices();
+		
+		System.out.println( "INSERT INTO narrations SELECT "+StringUtil.join(m_columns, ",")+" from narrations_temp" );
+		/*
+		ps = m_connection.prepareStatement("INSERT INTO narrations SELECT ("+StringUtil.join(m_columns, ",")+") from narrations_temp");
+		ps.execute();
+		ps.close();
+		
+		ps = m_connection.prepareStatement("DROP TABLE narrations_temp");
+		ps.execute();
+		ps.close(); */
 	}
 	
 	
@@ -115,30 +161,11 @@ public class SunnahBoundary
 		ps.execute();
 		ps.close();
 
-		if ( isNonArabicLanguage() )
-		{
-			ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_arabic_id' ON 'narrations' ('arabic_id' ASC);");
-			ps.execute();
-			ps.close();
-		}
-		
-		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_collection' ON 'narrations' ('collection' ASC);");
-		ps.execute();
-		ps.close();
-		
-		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_book_id' ON 'narrations' ('bookID' ASC);");
+		ps = m_connection.prepareStatement("CREATE TABLE IF NOT EXISTS chapters (collection TEXT NOT NULL, bookID INTEGER NOT NULL, name TEXT NOT NULL, UNIQUE(collection,bookID) ON CONFLICT REPLACE)");
 		ps.execute();
 		ps.close();
 		
 		ps = m_gradeConnection.prepareStatement("CREATE TABLE IF NOT EXISTS grades (id INTEGER PRIMARY KEY, arabic_id INTEGER NOT NULL, m_id INTEGER NOT NULL, grade TEXT NOT NULL, reference TEXT);");
-		ps.execute();
-		ps.close();
-		
-		ps = m_gradeConnection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_arabic_id' ON 'grades' ('arabic_id' ASC);");
-		ps.execute();
-		ps.close();
-		
-		ps = m_gradeConnection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_muhaddith_id' ON 'grades' ('m_id' ASC);");
 		ps.execute();
 		ps.close();
 	}
@@ -174,8 +201,10 @@ public class SunnahBoundary
 					ps.setInt( ++i, id );
 					ps.setString( ++i, m_collection);
 					//ps.setInt( ++i, readInt(json, "volumeNumber") );
-					ps.setInt( ++i, readInt(json, "bookNumber") );
-					ps.setString( ++i, getBookName(json, bookID) );
+					//ps.setInt( ++i, readInt(json, "bookNumber") );
+					
+					String bookName = getBookName(json, bookID);
+					ps.setString( ++i, bookName);
 					
 					int babNumber = readInt(json, "babNumber");
 					
@@ -208,7 +237,7 @@ public class SunnahBoundary
 					
 					ps.setInt( ++i, babNumber );
 					ps.setString( ++i, babName );
-					ps.setString( ++i, ( (String)json.get("hadithNumber") ).trim() );
+					ps.setString( ++i, getHadithNumber(json) );
 					ps.setString( ++i, readSanitizedString(json, "hadithText").trim() );
 					ps.setInt( ++i, bookID );
 					//ps.setLong( ++i, readDate(json, "last_updated") );
@@ -260,11 +289,11 @@ public class SunnahBoundary
 		if ( grade != null && !grade.isEmpty() )
 		{
 			int i = 0;
-
+			
 			PreparedStatement ps = m_gradeConnection.prepareStatement("INSERT INTO grades (arabic_id, m_id, grade) VALUES(?,?,?)");
 			ps.setInt( ++i, arabicID );
 			ps.setInt( ++i, muhaddith);
-			ps.setString( ++i, grade );
+			ps.setString( ++i, grade.replaceAll("<[^>]*>", "") );
 			ps.execute();
 			ps.close();
 		}
@@ -275,21 +304,37 @@ public class SunnahBoundary
 	{
 		String bookName = (String)json.get("bookName");
 		
-		if (bookName == null) {
-			return null;
-		}
-		
-		bookName = WordUtils.capitalizeFully( (String)json.get("bookName") );
-		bookName = bookName.replace("\n", " ").trim();
-		
-		if ( bookName.equalsIgnoreCase("ok") && m_language.equals("arabic") && m_collection.equals("adab") )
-		{
-			if ( adabArabicChapterNames.containsKey(bookID) ) {
-				bookName = adabArabicChapterNames.get(bookID);
-			} else {
-				bookName = "كتاب";
+		if ( ( bookName == null || bookName.isEmpty() ) && m_collection.equals("nasai") ) {
+			if (bookID == 47) {
+				bookName = "كتاب الإيمان وشرائعه";
+			} else if (bookID == 4) {
+				bookName = "كتاب الغسل والتيمم";
+			}
+		} else if ( ( bookName == null || bookName.isEmpty() ) && m_collection.equals("nawawi40") ) {
+			bookName = isNonArabicLanguage() ? "40 Hadith Nawawi" : "الأربعون النووية";
+		} else if ( ( bookName == null || bookName.isEmpty() ) && m_collection.equals("qudsi40") ) {
+			bookName = isNonArabicLanguage() ? "40 Hadith Qudsi" : "الحديث القدسي";
+		} else {
+			bookName = WordUtils.capitalizeFully( (String)json.get("bookName") );
+			bookName = bookName.replace("\n", " ").trim();
+			
+			if ( bookName.equalsIgnoreCase("ok") && m_language.equals("arabic") && m_collection.equals("adab") )
+			{
+				if ( adabArabicChapterNames.containsKey(bookID) ) {
+					bookName = adabArabicChapterNames.get(bookID);
+				} else {
+					bookName = "كتاب";
+				}
+			}
+			
+			if (bookName == null || bookName.isEmpty()) {
+				System.out.println("WARNING!");
+				System.out.println(bookName);
+				System.out.println(bookID);
+				System.out.println(m_collection);
 			}
 		}
+		
 		return bookName;
 	}
 	private String getTableName() {
@@ -298,7 +343,6 @@ public class SunnahBoundary
 	private boolean isNonArabicLanguage() {
 		return !m_language.equals("arabic");
 	}
-
 
 	private final long readDate(JSONObject json, String key) throws ParseException
 	{
@@ -327,6 +371,18 @@ public class SunnahBoundary
 		}
 
 		return null;
+	}
+	
+	
+	private static String getHadithNumber(JSONObject json)
+	{
+		String result = ( (String)json.get("hadithNumber") ).trim();
+		
+		if ( result.startsWith("Introduction ") ) {
+			result = result.substring( "Introduction ".length() );
+		}
+		
+		return result;
 	}
 
 
@@ -362,16 +418,25 @@ public class SunnahBoundary
 		
 		if ( m_language.equals("english") )
 		{
+			// [\[\(]SAW[\]\)]
+			
 			toConvert = toConvert.replace("(S)", "ﷺ");
 			toConvert = toConvert.replace("(s.a.w)", "ﷺ");
+			toConvert = toConvert.replace("(S.A.W)", "ﷺ");
 			toConvert = toConvert.replace("[SAW]", "ﷺ");
 			toConvert = toConvert.replace("(SAW)", "ﷺ");
+			toConvert = toConvert.replace("SAW0", "ﷺ");
+			toConvert = toConvert.replace("SWAS", "ﷺ");
 			toConvert = toConvert.replace("(saW)", "ﷺ");
+			toConvert = toConvert.replace("(saas)", "ﷺ");
+			toConvert = toConvert.replace("(SWAS)", "ﷺ");
 			toConvert = toConvert.replace("p.b.u.h", "ﷺ");
 			toConvert = toConvert.replace("pbuh", "ﷺ");
-			toConvert = toConvert.replace("\n", " ");
-			toConvert = toConvert.replaceAll(" +", " ");
+			toConvert = toConvert.replace("P.B.U.H.", "ﷺ");
+			toConvert = toConvert.replaceAll("\\s+", " ");
 		}
+		
+		toConvert = toConvert.replaceAll("<[^>]*>", "");
 
 		return toConvert;
 	}

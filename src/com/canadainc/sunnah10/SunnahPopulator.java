@@ -20,7 +20,7 @@ public class SunnahPopulator
 	public void process() throws Exception
 	{
 		File root = new File("res");
-		File[] collections = root.listFiles();
+		File[] collections = root.listFiles();;
 		int total = 24;
 		int current = 0;
 
@@ -55,18 +55,36 @@ public class SunnahPopulator
 						
 						++current;
 						System.out.println(current+"/"+total);
-						SunnahBoundary sb = new SunnahBoundary(language, collectionName);
-						sb.createTable();
-						sb.populate(chapterContents);
+						if (/* collectionName.equals("nasai") */true)
+						{
+							SunnahBoundary sb = new SunnahBoundary(language, collectionName);
+							sb.createTable();
+							sb.populate(chapterContents);
+						}
 					}
 				}
 			}
 		}
 		
+		System.out.println("Populating Chapters...");
+		SunnahBookManager sbm = new SunnahBookManager();
+		sbm.attachDatabases();
+		sbm.populateChapters();
+		
+		System.out.println("Dropping book names 1/2...");
 		SunnahBoundary sb = new SunnahBoundary("arabic", "");
+		sb.removeBookName();
+		
+		System.out.println("Dropping book names 2/2...");
+		sb = new SunnahBoundary("english", "");
+		sb.removeBookName();
+		/*
+		System.out.println("Vacuuming 1/2!");
+		sb = new SunnahBoundary("arabic", "");
 		sb.vacuum();
 		
+		System.out.println("Vacuuming 2/2!");
 		sb = new SunnahBoundary("english", "");
-		sb.vacuum();
+		sb.vacuum(); */
 	}
 }

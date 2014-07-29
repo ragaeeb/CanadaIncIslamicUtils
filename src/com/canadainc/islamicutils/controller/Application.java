@@ -47,6 +47,8 @@ public class Application
 		SunnahPopulator m_instance = new SunnahPopulator();
 
 		try {
+			Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
+			
 			m_instance.process();
 		} catch (Exception e) {
 			e.printStackTrace();
