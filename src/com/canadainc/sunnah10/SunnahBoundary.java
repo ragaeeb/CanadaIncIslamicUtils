@@ -75,6 +75,7 @@ public class SunnahBoundary
 		m_columns.add("bookName TEXT");
 		m_columns.add("babNumber INTEGER");
 		m_columns.add("babName TEXT");
+		m_columns.add("inBookNumber INTEGER");
 		m_columns.add("hadithNumber TEXT");
 		m_columns.add("hadithText TEXT");
 		m_columns.add("bookID INTEGER");
@@ -85,8 +86,10 @@ public class SunnahBoundary
 	}
 	
 	
-	private void createIndices() throws SQLException
+	public void createIndices() throws SQLException
 	{
+		System.out.println("Creating indices...");
+		
 		PreparedStatement ps;
 		
 		if ( isNonArabicLanguage() )
@@ -97,6 +100,14 @@ public class SunnahBoundary
 		}
 		
 		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_collection' ON 'narrations' ('collection' ASC);");
+		ps.execute();
+		ps.close();
+		
+		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_book_id' ON 'narrations' ('bookID' ASC);");
+		ps.execute();
+		ps.close();
+		
+		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS 'fk_in_book_number' ON 'narrations' ('inBookNumber' ASC);");
 		ps.execute();
 		ps.close();
 		
@@ -126,8 +137,6 @@ public class SunnahBoundary
 			m_columns.set(i, column);
 		}
 		
-		createIndices();
-		
 		System.out.println( "INSERT INTO narrations SELECT "+StringUtil.join(m_columns, ",")+" from narrations_temp" );
 		/*
 		ps = m_connection.prepareStatement("INSERT INTO narrations SELECT ("+StringUtil.join(m_columns, ",")+") from narrations_temp");
@@ -144,6 +153,8 @@ public class SunnahBoundary
 	{
 		m_connection = DriverManager.getConnection("jdbc:sqlite:res/"+getTableName()+".db");
 		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/original_grades_"+m_language+".db");
+		
+		createIndices();
 		
 		PreparedStatement ps = m_connection.prepareStatement("VACUUM");
 		ps.execute();
@@ -208,6 +219,8 @@ public class SunnahBoundary
 					
 					int babNumber = readInt(json, "babNumber");
 					
+					int inBookNumber = readInt(json, "ourHadithNumber");
+					
 					String babName = (String)json.get("babName");
 					
 					if (babName != null) {
@@ -237,6 +250,7 @@ public class SunnahBoundary
 					
 					ps.setInt( ++i, babNumber );
 					ps.setString( ++i, babName );
+					ps.setInt( ++i, inBookNumber );
 					ps.setString( ++i, getHadithNumber(json) );
 					ps.setString( ++i, readSanitizedString(json, "hadithText").trim() );
 					ps.setInt( ++i, bookID );

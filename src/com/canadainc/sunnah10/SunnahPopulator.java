@@ -74,10 +74,12 @@ public class SunnahPopulator
 		System.out.println("Dropping book names 1/2...");
 		SunnahBoundary sb = new SunnahBoundary("arabic", "");
 		sb.removeBookName();
+		sb.createIndices();
 		
 		System.out.println("Dropping book names 2/2...");
 		sb = new SunnahBoundary("english", "");
 		sb.removeBookName();
+		sb.createIndices();
 		/*
 		System.out.println("Vacuuming 1/2!");
 		sb = new SunnahBoundary("arabic", "");
