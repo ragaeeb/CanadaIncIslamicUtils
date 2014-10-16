@@ -70,7 +70,7 @@ public class Application
 
 	public static void main(String[] args)
 	{
-		//testDownloadDatabase();
-		testHadith();
+		testDownloadDatabase();
+		//testHadith();
 	}
 }
