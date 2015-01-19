@@ -19,7 +19,7 @@ public class SunnahPopulator
 	 */
 	public void process() throws Exception
 	{
-		File root = new File("res");
+		File root = new File("res/sunnah10");
 		File[] collections = root.listFiles();;
 		int total = 24;
 		int current = 0;

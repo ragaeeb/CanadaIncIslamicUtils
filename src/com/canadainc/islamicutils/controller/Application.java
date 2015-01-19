@@ -2,11 +2,7 @@ package com.canadainc.islamicutils.controller;
 
 import java.io.IOException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
-import com.canadainc.quran10.QuranArabicExtractor;
+import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
 import com.canadainc.quran10.ibnkatheer.TafsirController;
@@ -75,10 +71,10 @@ public class Application
 	
 	public static void testPopulateArabicQuran()
 	{
-		QuranArabicExtractor qap = new QuranArabicExtractor("res/quran-data.xml");
+		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db");
 
 		try {
-			qap.load();
+			qap.process();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

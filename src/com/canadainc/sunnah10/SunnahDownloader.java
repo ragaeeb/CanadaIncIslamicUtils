@@ -52,19 +52,19 @@ public class SunnahDownloader
 		
 		for (String book: collections)
 		{
-			File dir = new File("res/"+book);
+			File dir = new File("res/sunnah10/"+book);
 			
 			if ( !dir.exists() && !dir.mkdir() ) {
-				System.out.println("Couldn't create res/"+book);
+				System.out.println("Couldn't create res/sunnah10/"+book);
 				return;
 			}
 			
 			for (String language: m_languages)
 			{
-				dir = new File("res/"+book+"/"+language);
+				dir = new File("res/sunnah10/"+book+"/"+language);
 				
 				if ( !dir.exists() && !dir.mkdir() ) {
-					System.out.println("Couldn't create res/"+book+"/"+language);
+					System.out.println("Couldn't create res/sunnah10/"+book+"/"+language);
 					return;
 				}
 				
@@ -93,7 +93,7 @@ public class SunnahDownloader
 	{
 		File dir;
 		String fileName = page+".txt";
-		dir = new File("res/"+book+"/"+language+"/"+fileName);
+		dir = new File("res/sunnah10/"+book+"/"+language+"/"+fileName);
 		
 		if ( !dir.exists() )
 		{

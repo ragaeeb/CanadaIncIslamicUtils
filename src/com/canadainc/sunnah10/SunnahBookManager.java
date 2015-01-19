@@ -11,18 +11,18 @@ public class SunnahBookManager
 	
 	public SunnahBookManager() throws SQLException
 	{
-		m_connection = DriverManager.getConnection("jdbc:sqlite:res/original_grades_arabic.db");
+		m_connection = DriverManager.getConnection("jdbc:sqlite:res/quran10/original_grades_arabic.db");
 	}
 	
 	
 	public void attachDatabases() throws SQLException
 	{
 		System.out.println("attaching databases...");
-		PreparedStatement ps = m_connection.prepareStatement("ATTACH DATABASE 'res/sunnah_arabic.db' AS 'sunnah_arabic'");
+		PreparedStatement ps = m_connection.prepareStatement("ATTACH DATABASE 'res/quran10/sunnah_arabic.db' AS 'sunnah_arabic'");
 		ps.execute();
 		ps.close();
 		
-		ps = m_connection.prepareStatement("ATTACH DATABASE 'res/sunnah_english.db' AS 'sunnah_english'");
+		ps = m_connection.prepareStatement("ATTACH DATABASE 'res/quran10/sunnah_english.db' AS 'sunnah_english'");
 		ps.execute();
 		ps.close();
 		System.out.println("attached...");

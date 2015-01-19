@@ -26,6 +26,24 @@ public class SurahMetadata
 	}
 
 
+	@Override
+	public int hashCode() {
+		return name.hashCode()+verseCount+verseStart+type.hashCode()+revelationOrder+rukus+8;
+	}
+
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof SurahMetadata) {
+			SurahMetadata sm = (SurahMetadata)obj;
+			return sm.name.equals(name) && sm.revelationOrder == revelationOrder && sm.rukus == rukus && sm.type.equals(type) && sm.verseCount == verseCount && sm.verseStart == verseStart;
+		}
+		
+		return false;
+	}
+
+
 	public static enum RevealedLocation
 	{
 		Meccan,

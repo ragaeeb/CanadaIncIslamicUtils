@@ -73,8 +73,8 @@ public class SunnahBoundary
 		m_language = language;
 		m_collection = collection;
 
-		m_connection = DriverManager.getConnection("jdbc:sqlite:res/"+getTableName()+".db");
-		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/original_grades_"+language+".db");
+		m_connection = DriverManager.getConnection("jdbc:sqlite:res/sunnah10/"+getTableName()+".db");
+		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/sunnah10/original_grades_"+language+".db");
 
 		m_columns = new ArrayList<String>();
 		m_columns.add("id INTEGER PRIMARY KEY");
@@ -158,8 +158,8 @@ public class SunnahBoundary
 	
 	public void vacuum() throws SQLException
 	{
-		m_connection = DriverManager.getConnection("jdbc:sqlite:res/"+getTableName()+".db");
-		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/original_grades_"+m_language+".db");
+		m_connection = DriverManager.getConnection("jdbc:sqlite:res/sunnah10/"+getTableName()+".db");
+		m_gradeConnection = DriverManager.getConnection("jdbc:sqlite:res/sunnah10/original_grades_"+m_language+".db");
 		
 		createIndices();
 		
