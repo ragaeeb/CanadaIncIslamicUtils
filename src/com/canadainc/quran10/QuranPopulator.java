@@ -13,12 +13,20 @@ public class QuranPopulator
 	private String m_arabicXml;
 	private String m_supplicationsPath;
 	private String m_dbPath;
+	private String[] m_translations;
 	
-	public QuranPopulator(String arabicXml, String supplications, String dbPath)
+	public QuranPopulator(String arabicXml, String supplications, String dbPath, String[] translationPaths)
 	{
 		m_arabicXml = arabicXml;
 		m_supplicationsPath = supplications;
 		m_dbPath = dbPath;
+		m_translations = translationPaths;
+	}
+	
+	
+	public QuranPopulator(String arabicXml, String supplications, String dbPath)
+	{
+		this(arabicXml, supplications, dbPath, new String[0]);
 	}
 	
 	public void process() throws SQLException, IOException, ParserConfigurationException, SAXException, ClassNotFoundException
@@ -49,5 +57,33 @@ public class QuranPopulator
 		
 		System.out.println("populate verses...");
 		qb.populateVerses("source_uthmani", "source_clean");
+		
+		System.out.println("populate recitations...");
+		qb.populateRecitations("res/quran10/qarees.csv", "res/quran10/recitations.csv");
+		
+		/*System.out.println("populate images...");
+		qb.populateImages("res/quran10/ayats"); */
+		
+		System.out.println("vacuum... ");
+		qb.execute("VACUUM");
+		qb.getConnection().close();
+		
+		for (String translation: m_translations)
+		{
+			String translationPath = "res/quran10/quran_"+translation+".db";
+			
+			f = new File(translationPath);
+			f.delete();
+			
+			System.out.println("populate... "+translation);
+			QuranTranslationBoundary qtb = new QuranTranslationBoundary(translationPath);
+			qtb.createTable();
+			qtb.createIndices();
+			qtb.populateChapters( qae.getEnglish() );
+			qtb.populateVerses("translation_source", translation);
+			System.out.println("vacuum... ");
+			qtb.execute("VACUUM");
+			qtb.getConnection().close();
+		}
 	}
 }

@@ -2,6 +2,8 @@ package com.canadainc.islamicutils.controller;
 
 import java.io.IOException;
 
+import com.canadainc.quran10.AyatDownloader;
+import com.canadainc.quran10.QuranArabicExtractor;
 import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
@@ -71,10 +73,21 @@ public class Application
 	
 	public static void testPopulateArabicQuran()
 	{
-		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db");
+		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", new String[]{"english"});
 
 		try {
 			qap.process();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static void testDownloadAyatImages()
+	{
+		try {
+			AyatDownloader a = new AyatDownloader( new QuranArabicExtractor("res/quran10/quran-data.xml") );
+			a.beginDownload();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -86,5 +99,6 @@ public class Application
 		//testDownloadDatabase();
 		//testHadith();
 		testPopulateArabicQuran();
+		//testDownloadAyatImages();
 	}
 }

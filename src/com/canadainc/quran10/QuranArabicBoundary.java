@@ -1,11 +1,18 @@
 package com.canadainc.quran10;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
+
+import com.canadainc.common.io.IOUtils;
 
 public class QuranArabicBoundary
 {
@@ -34,6 +41,45 @@ public class QuranArabicBoundary
 		execute("CREATE TABLE IF NOT EXISTS sajdas (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, type INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS mushaf_pages (page_number INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS supplications (surah_id INTEGER REFERENCES surahs(id), verse_number_start INTEGER, verse_number_end INTEGER, UNIQUE(surah_id,verse_number_start) ON CONFLICT REPLACE);");
+		execute("CREATE TABLE IF NOT EXISTS qarees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, bio TEXT, level INTEGER DEFAULT 1)");
+		execute("CREATE TABLE IF NOT EXISTS recitations (qaree_id INTEGER REFERENCES qarees(id) ON DELETE CASCADE, description TEXT, value TEXT NOT NULL)");
+		execute("CREATE TABLE IF NOT EXISTS images (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content BLOB, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
+	}
+	
+	
+	public void populateImages(String sourceFolder) throws SQLException, FileNotFoundException
+	{
+		File folder = new File(sourceFolder);
+		File[] listOfFiles = folder.listFiles( new FilenameFilter()
+		{
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.matches("[1-9]{1,3}_[1-9]{1,3}\\.png");
+			}
+		} );
+
+		if (listOfFiles != null)
+		{
+			PreparedStatement ps = m_connection.prepareStatement("INSERT INTO images (surah_id,verse_number,content) VALUES (?,?,?)");
+			
+			for (File f: listOfFiles)
+			{
+				String name = f.getName();
+				int underscoreIndex = name.indexOf("_");
+				
+				int chapter = Integer.parseInt( name.substring(0, underscoreIndex) );
+				int verse = Integer.parseInt( name.substring( underscoreIndex+1, name.lastIndexOf(".") ) );
+				
+				int i = 0;
+				ps.setInt(++i, chapter);
+				ps.setInt(++i, verse);
+				ps.setBytes( ++i, IOUtils.getByteArrayFromFile(f) );
+				ps.addBatch();
+			}
+			
+			ps.executeBatch();
+			ps.close();
+		}
 	}
 	
 	
@@ -113,6 +159,51 @@ public class QuranArabicBoundary
 			ps.setInt(++i, id);
 			ps.setInt(++i, s.chapter);
 			ps.setInt(++i, s.verse);
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
+	}
+	
+	
+	public void populateRecitations(String qareesCsv, String recitationsCsv) throws SQLException, IOException
+	{
+		String content = IOUtils.readFileUtf8( new File(qareesCsv) );
+		String[] data = content.split("\n");
+		
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO qarees (id,name,level,bio) VALUES (?,?,?,?)");
+		
+		for (String s: data)
+		{
+			int i = 0;
+			
+			String[] tokens = s.split("\",\"");
+			
+			ps.setInt( ++i, Integer.parseInt( tokens[0].substring(1) ) );
+			ps.setString( ++i, tokens[1] );
+			ps.setInt( ++i, Integer.parseInt(tokens[2]) );
+			ps.setString( ++i, tokens[3].substring( 0, tokens[3].length()-1 ) );
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
+		
+		content = IOUtils.readFileUtf8( new File(recitationsCsv) );
+		data = content.split("\n");
+		
+		ps = m_connection.prepareStatement("INSERT INTO recitations (qaree_id,description,value) VALUES (?,?,?)");
+		
+		for (String s: data)
+		{
+			int i = 0;
+			
+			String[] tokens = s.split("\",\"");
+			
+			ps.setInt( ++i, Integer.parseInt( tokens[0].substring(1) ) );
+			ps.setString( ++i, tokens[1] );
+			ps.setString( ++i, tokens[2].substring( 0, tokens[2].length()-1 ) );
 			ps.addBatch();
 		}
 		

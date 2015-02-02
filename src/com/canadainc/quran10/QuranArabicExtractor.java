@@ -61,6 +61,15 @@ public class QuranArabicExtractor
 		parseSurahAyat(doc, "pages", "page", m_mushafPages);
 		parseSurahAyat(doc, "rukus", "ruku", m_rukus);
 		parseSajdas(doc);
+		
+		/**
+		 * from_surah,from_verse,to_surah,to_verse
+		 * 1,1,2,141
+		 * 
+		 * 
+		 * juz,from_surah_id,from_verse,to_surah_id
+		 * 1,  1, 1
+		 */
 	}
 	
 	
