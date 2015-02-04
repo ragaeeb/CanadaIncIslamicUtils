@@ -73,7 +73,7 @@ public class Application
 	
 	public static void testPopulateArabicQuran()
 	{
-		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", new String[]{"english"});
+		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", "res/quran10/similar.txt", new String[]{"english"});
 
 		try {
 			qap.process();

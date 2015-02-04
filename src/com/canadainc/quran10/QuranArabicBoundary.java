@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.canadainc.common.io.IOUtils;
@@ -43,7 +44,36 @@ public class QuranArabicBoundary
 		execute("CREATE TABLE IF NOT EXISTS supplications (surah_id INTEGER REFERENCES surahs(id), verse_number_start INTEGER, verse_number_end INTEGER, UNIQUE(surah_id,verse_number_start) ON CONFLICT REPLACE);");
 		execute("CREATE TABLE IF NOT EXISTS qarees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, bio TEXT, level INTEGER DEFAULT 1)");
 		execute("CREATE TABLE IF NOT EXISTS recitations (qaree_id INTEGER REFERENCES qarees(id) ON DELETE CASCADE, description TEXT, value TEXT NOT NULL)");
-		execute("CREATE TABLE IF NOT EXISTS images (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content BLOB, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
+		//execute("CREATE TABLE IF NOT EXISTS images (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content BLOB, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
+		execute("CREATE TABLE related (surah_id INTEGER NOT NULL REFERENCES surahs(id), from_verse_id INTEGER NOT NULL, to_verse_id INTEGER NOT NULL, other_surah_id INTEGER NOT NULL REFERENCES surahs(id), other_from_verse_id INTEGER NOT NULL, other_to_verse_id INTEGER NOT NULL, UNIQUE(surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id) ON CONFLICT IGNORE)");
+	}
+	
+	
+	public void execute(String s) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement(s);
+		ps.execute();
+		ps.close();
+	}
+	
+	
+	public void populateHizbs(Map<Integer,SurahAyat> supplications) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO hizbs (id,surah_id,verse_number) VALUES (?,?,?)");
+		
+		for ( int id: supplications.keySet() )
+		{
+			int i = 0;
+			
+			SurahAyat s = supplications.get(id);
+			ps.setInt(++i, id);
+			ps.setInt(++i, s.chapter);
+			ps.setInt(++i, s.verse);
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
 	}
 	
 	
@@ -83,53 +113,9 @@ public class QuranArabicBoundary
 	}
 	
 	
-	public void populateMetadata(Map<Integer,SurahMetadata> supplications) throws SQLException
-	{
-		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO surahs (id,name,verse_count,start,type,revelation_order,rukus) VALUES (?,?,?,?,?,?,?)");
-		
-		for ( int chapter: supplications.keySet() )
-		{
-			SurahMetadata s = supplications.get(chapter);
-			
-			int i = 0;
-			ps.setInt(++i, chapter);
-			ps.setString(++i, s.name);
-			ps.setInt(++i, s.verseCount);
-			ps.setInt(++i, s.verseStart);
-			ps.setInt(++i, s.type.ordinal()+1 ); // because we don't want a value of 0 in the database
-			ps.setInt(++i, s.revelationOrder);
-			ps.setInt(++i, s.rukus);
-			ps.addBatch();
-		}
-		
-		ps.executeBatch();
-		ps.close();
-	}
-	
-	
 	public void populateJuzs(Map<Integer,SurahAyat> supplications) throws SQLException
 	{
 		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO juzs (id,surah_id,verse_number) VALUES (?,?,?)");
-		
-		for ( int id: supplications.keySet() )
-		{
-			int i = 0;
-			
-			SurahAyat s = supplications.get(id);
-			ps.setInt(++i, id);
-			ps.setInt(++i, s.chapter);
-			ps.setInt(++i, s.verse);
-			ps.addBatch();
-		}
-		
-		ps.executeBatch();
-		ps.close();
-	}
-	
-	
-	public void populateHizbs(Map<Integer,SurahAyat> supplications) throws SQLException
-	{
-		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO hizbs (id,surah_id,verse_number) VALUES (?,?,?)");
 		
 		for ( int id: supplications.keySet() )
 		{
@@ -157,6 +143,50 @@ public class QuranArabicBoundary
 			
 			SurahAyat s = supplications.get(id);
 			ps.setInt(++i, id);
+			ps.setInt(++i, s.chapter);
+			ps.setInt(++i, s.verse);
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
+	}
+	
+	
+	public void populateMetadata(Map<Integer,SurahMetadata> supplications) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO surahs (id,name,verse_count,start,type,revelation_order,rukus) VALUES (?,?,?,?,?,?,?)");
+		
+		for ( int chapter: supplications.keySet() )
+		{
+			SurahMetadata s = supplications.get(chapter);
+			
+			int i = 0;
+			ps.setInt(++i, chapter);
+			ps.setString(++i, s.name);
+			ps.setInt(++i, s.verseCount);
+			ps.setInt(++i, s.verseStart);
+			ps.setInt(++i, s.type.ordinal()+1 ); // because we don't want a value of 0 in the database
+			ps.setInt(++i, s.revelationOrder);
+			ps.setInt(++i, s.rukus);
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
+	}
+	
+	
+	public void populateMushafPages(Map<Integer,SurahAyat> pages) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO mushaf_pages (page_number,surah_id,verse_number) VALUES (?,?,?)");
+		
+		for ( int pageNumber: pages.keySet() )
+		{
+			int i = 0;
+			
+			SurahAyat s = pages.get(pageNumber);
+			ps.setInt(++i, pageNumber);
 			ps.setInt(++i, s.chapter);
 			ps.setInt(++i, s.verse);
 			ps.addBatch();
@@ -232,44 +262,6 @@ public class QuranArabicBoundary
 	}
 	
 	
-	public void populateSupplications(Collection<Supplication> supplications) throws SQLException
-	{
-		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO supplications (surah_id,verse_number_start,verse_number_end) VALUES (?,?,?)");
-		
-		for (Supplication s: supplications)
-		{
-			int i = 0;
-			ps.setInt(++i, s.chapter);
-			ps.setInt(++i, s.verseStart);
-			ps.setInt(++i, s.verseEnd);
-			ps.addBatch();
-		}
-		
-		ps.executeBatch();
-		ps.close();
-	}
-	
-	
-	public void populateMushafPages(Map<Integer,SurahAyat> pages) throws SQLException
-	{
-		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO mushaf_pages (page_number,surah_id,verse_number) VALUES (?,?,?)");
-		
-		for ( int pageNumber: pages.keySet() )
-		{
-			int i = 0;
-			
-			SurahAyat s = pages.get(pageNumber);
-			ps.setInt(++i, pageNumber);
-			ps.setInt(++i, s.chapter);
-			ps.setInt(++i, s.verse);
-			ps.addBatch();
-		}
-		
-		ps.executeBatch();
-		ps.close();
-	}
-	
-	
 	public void populateSajdas(Collection<Sajda> pages) throws SQLException
 	{
 		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO sajdas (surah_id,verse_number,type) VALUES (?,?,?)");
@@ -288,6 +280,50 @@ public class QuranArabicBoundary
 	}
 	
 	
+	public void populateSimilar(Map< Supplication, List<Supplication> > similar) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO related (surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id) VALUES (?,?,?,?,?,?)");
+		
+		for ( Supplication s: similar.keySet() )
+		{
+			List<Supplication> values = similar.get(s);
+			
+			for (Supplication x: values)
+			{
+				int i = 0;
+				ps.setInt( ++i, s.chapter );
+				ps.setInt( ++i, s.verseStart );
+				ps.setInt( ++i, s.verseEnd );
+				ps.setInt( ++i, x.chapter );
+				ps.setInt( ++i, x.verseStart );
+				ps.setInt( ++i, x.verseEnd );
+				ps.addBatch();
+			}
+		}
+		
+		ps.executeBatch();
+		ps.close();
+	}
+	
+	
+	public void populateSupplications(Collection<Supplication> supplications) throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO supplications (surah_id,verse_number_start,verse_number_end) VALUES (?,?,?)");
+		
+		for (Supplication s: supplications)
+		{
+			int i = 0;
+			ps.setInt(++i, s.chapter);
+			ps.setInt(++i, s.verseStart);
+			ps.setInt(++i, s.verseEnd);
+			ps.addBatch();
+		}
+		
+		ps.executeBatch();
+		ps.close();
+	}
+	
+	
 	public void populateVerses(String sourceUthmani, String sourceClean) throws SQLException
 	{
 		execute("ATTACH DATABASE 'res/quran10/"+sourceUthmani+".db' AS '"+sourceUthmani+"'");
@@ -295,14 +331,6 @@ public class QuranArabicBoundary
 		execute("INSERT INTO ayahs (id,surah_id,verse_number,content,searchable) SELECT u.uindex,u.sura,u.aya,u.utext,s.stext FROM "+sourceUthmani+".quran_text u INNER JOIN "+sourceClean+".quran_text s ON s.sindex=u.uindex ORDER BY uindex ASC;");
 		execute("DETACH DATABASE "+sourceUthmani);
 		execute("DETACH DATABASE "+sourceClean);
-	}
-	
-	
-	public void execute(String s) throws SQLException
-	{
-		PreparedStatement ps = m_connection.prepareStatement(s);
-		ps.execute();
-		ps.close();
 	}
 
 

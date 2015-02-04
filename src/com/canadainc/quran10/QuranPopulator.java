@@ -13,20 +13,22 @@ public class QuranPopulator
 	private String m_arabicXml;
 	private String m_supplicationsPath;
 	private String m_dbPath;
+	private String m_similarPath;
 	private String[] m_translations;
 	
-	public QuranPopulator(String arabicXml, String supplications, String dbPath, String[] translationPaths)
+	public QuranPopulator(String arabicXml, String supplications, String dbPath, String similarPath, String[] translationPaths)
 	{
 		m_arabicXml = arabicXml;
 		m_supplicationsPath = supplications;
 		m_dbPath = dbPath;
+		m_similarPath = similarPath;
 		m_translations = translationPaths;
 	}
 	
 	
-	public QuranPopulator(String arabicXml, String supplications, String dbPath)
+	public QuranPopulator(String arabicXml, String supplications, String similarPath, String dbPath)
 	{
-		this(arabicXml, supplications, dbPath, new String[0]);
+		this(arabicXml, supplications, dbPath, similarPath, new String[0]);
 	}
 	
 	public void process() throws SQLException, IOException, ParserConfigurationException, SAXException, ClassNotFoundException
@@ -63,6 +65,11 @@ public class QuranPopulator
 		
 		/*System.out.println("populate images...");
 		qb.populateImages("res/quran10/ayats"); */
+		
+		System.out.println("populate similar...");
+		SimilarParser sp = new SimilarParser(m_similarPath);
+		sp.parse();
+		qb.populateSimilar( sp.getSimilar() );
 		
 		System.out.println("vacuum... ");
 		qb.execute("VACUUM");
