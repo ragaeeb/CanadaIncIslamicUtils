@@ -20,13 +20,16 @@ public class QuranTranslationBoundary
 
 	public void createIndices() throws SQLException
 	{
+		execute("CREATE INDEX IF NOT EXISTS verses_index ON verses(chapter_id,verse_id)");
+		execute("CREATE INDEX IF NOT EXISTS trans_index ON transliteration(chapter_id,verse_id)");
 	}
 
 
 	public void createTable() throws SQLException
 	{
 		execute("CREATE TABLE IF NOT EXISTS chapters (id INTEGER PRIMARY KEY, transliteration TEXT, translation TEXT)");
-		execute("CREATE TABLE IF NOT EXISTS verses (id INTEGER PRIMARY KEY, translation TEXT)");
+		execute("CREATE TABLE IF NOT EXISTS verses (chapter_id INTEGER REFERENCES chapters(id), verse_id INTEGER, translation TEXT)");
+		execute("CREATE TABLE transliteration (chapter_id INTEGER REFERENCES chapters(id), verse_id INTEGER, html TEXT)");
 	}
 
 
@@ -53,7 +56,8 @@ public class QuranTranslationBoundary
 	public void populateVerses(String translationSource, String tableName) throws SQLException
 	{
 		execute("ATTACH DATABASE 'res/quran10/"+translationSource+".db' AS '"+translationSource+"'");
-		execute("INSERT INTO verses (id,translation) SELECT rowid,text FROM "+tableName);
+		execute("INSERT INTO verses (chapter_id,verse_id,translation) SELECT surah_id,verse_id,text FROM "+tableName+" ORDER BY surah_id,verse_id");
+		execute("INSERT INTO transliteration (chapter_id,verse_id,html) SELECT * FROM "+translationSource+".transliteration");
 		execute("DETACH DATABASE "+translationSource);
 	}
 

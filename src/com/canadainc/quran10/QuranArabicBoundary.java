@@ -1,7 +1,6 @@
 package com.canadainc.quran10;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -28,13 +27,19 @@ public class QuranArabicBoundary
 	
 	public void createIndices() throws SQLException
 	{
+		execute("CREATE INDEX IF NOT EXISTS ayah_surah_index ON ayahs(surah_id,verse_number)");
+		execute("CREATE INDEX IF NOT EXISTS juz_index ON juzs(surah_id,verse_number)");
+		execute("CREATE INDEX IF NOT EXISTS mushaf_index ON mushaf_pages(surah_id,verse_number)");
+		execute("CREATE INDEX IF NOT EXISTS qarees_index ON qarees(level)");
+		execute("CREATE INDEX IF NOT EXISTS recitations_index ON recitations(qaree_id)");
+		execute("CREATE INDEX IF NOT EXISTS related_index ON related(surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id)");
 	}
 	
 	
 	public void createTable() throws SQLException
 	{
 		execute("CREATE TABLE IF NOT EXISTS surahs (id INTEGER PRIMARY KEY, name TEXT, verse_count INTEGER, start INTEGER, type INTEGER, revelation_order INTEGER, rukus INTEGER)");
-		execute("CREATE TABLE IF NOT EXISTS ayahs (id INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content TEXT, searchable TEXT, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
+		execute("CREATE TABLE IF NOT EXISTS ayahs (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content TEXT, searchable TEXT, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS juzs (id INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS hizbs (id INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS manzils (id INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
@@ -328,7 +333,7 @@ public class QuranArabicBoundary
 	{
 		execute("ATTACH DATABASE 'res/quran10/"+sourceUthmani+".db' AS '"+sourceUthmani+"'");
 		execute("ATTACH DATABASE 'res/quran10/"+sourceClean+".db' AS '"+sourceClean+"'");
-		execute("INSERT INTO ayahs (id,surah_id,verse_number,content,searchable) SELECT u.uindex,u.sura,u.aya,u.utext,s.stext FROM "+sourceUthmani+".quran_text u INNER JOIN "+sourceClean+".quran_text s ON s.sindex=u.uindex ORDER BY uindex ASC;");
+		execute("INSERT INTO ayahs (surah_id,verse_number,content,searchable) SELECT u.sura,u.aya,u.utext,s.stext FROM "+sourceUthmani+".quran_text u INNER JOIN "+sourceClean+".quran_text s ON s.sindex=u.uindex ORDER BY uindex ASC;");
 		execute("DETACH DATABASE "+sourceUthmani);
 		execute("DETACH DATABASE "+sourceClean);
 	}

@@ -43,7 +43,6 @@ public class QuranPopulator
 		
 		System.out.println("create tables...");
 		qb.createTable();
-		qb.createIndices();
 		
 		System.out.println("populate metadata...");
 		qb.populateMetadata( qae.getMetadata() );
@@ -71,6 +70,9 @@ public class QuranPopulator
 		sp.parse();
 		qb.populateSimilar( sp.getSimilar() );
 		
+		System.out.println("Creating indices...");
+		qb.createIndices();
+		
 		System.out.println("vacuum... ");
 		qb.execute("VACUUM");
 		qb.getConnection().close();
@@ -85,9 +87,9 @@ public class QuranPopulator
 			System.out.println("populate... "+translation);
 			QuranTranslationBoundary qtb = new QuranTranslationBoundary(translationPath);
 			qtb.createTable();
-			qtb.createIndices();
 			qtb.populateChapters( qae.getEnglish() );
 			qtb.populateVerses("translation_source", translation);
+			qtb.createIndices();
 			System.out.println("vacuum... ");
 			qtb.execute("VACUUM");
 			qtb.getConnection().close();
