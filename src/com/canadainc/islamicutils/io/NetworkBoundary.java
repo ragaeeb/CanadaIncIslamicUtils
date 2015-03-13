@@ -25,7 +25,7 @@ public class NetworkBoundary
 
 			rd.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return result.toString();
 	}

@@ -15,6 +15,7 @@ public class QuranPopulator
 	private String m_dbPath;
 	private String m_similarPath;
 	private String[] m_translations;
+	private boolean m_applyImages;
 	
 	public QuranPopulator(String arabicXml, String supplications, String dbPath, String similarPath, String[] translationPaths)
 	{
@@ -23,9 +24,16 @@ public class QuranPopulator
 		m_dbPath = dbPath;
 		m_similarPath = similarPath;
 		m_translations = translationPaths;
+		m_applyImages = false;
 	}
 	
 	
+	public void setApplyImages(boolean applyImages)
+	{
+		m_applyImages = applyImages;
+	}
+
+
 	public QuranPopulator(String arabicXml, String supplications, String similarPath, String dbPath)
 	{
 		this(arabicXml, supplications, dbPath, similarPath, new String[0]);
@@ -42,7 +50,7 @@ public class QuranPopulator
 		QuranArabicBoundary qb = new QuranArabicBoundary(m_dbPath);
 		
 		System.out.println("create tables...");
-		qb.createTable();
+		qb.createTable(m_applyImages);
 		
 		System.out.println("populate metadata...");
 		qb.populateMetadata( qae.getMetadata() );
@@ -62,16 +70,25 @@ public class QuranPopulator
 		System.out.println("populate recitations...");
 		qb.populateRecitations("res/quran10/qarees.csv", "res/quran10/recitations.csv");
 		
-		/*System.out.println("populate images...");
-		qb.populateImages("res/quran10/ayats"); */
+		if (m_applyImages)
+		{
+			System.out.println("populate images...");
+			qb.populateImages("res/quran10/ayats");
+		}
 		
 		System.out.println("populate similar...");
 		SimilarParser sp = new SimilarParser(m_similarPath);
 		sp.parse();
 		qb.populateSimilar( sp.getSimilar() );
 		
+		System.out.println("remove basmalahs...");
+		qb.execute("UPDATE ayahs SET content=TRIM(REPLACE(content, 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '')) WHERE content LIKE 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ%' AND verse_number=1 AND surah_id != 1 AND surah_id != 9");
+		qb.execute("UPDATE ayahs SET searchable=TRIM(REPLACE(searchable, 'بسم الله الرحمن الرحيم', '')) WHERE searchable LIKE 'بسم الله الرحمن الرحيم%' AND verse_number=1 AND surah_id != 1 AND surah_id != 9");
+		qb.execute("UPDATE ayahs SET content=TRIM(REPLACE(content, 'بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '')) WHERE content LIKE 'بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ%' AND verse_number=1 AND (surah_id=95 OR surah_id=97)");
+		//qb.execute("UPDATE ayahs SET content=TRIM(REPLACE(content, 'بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ', '')) WHERE content LIKE 'بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ%' AND verse_number=1 AND surah_id = 97");
+		
 		System.out.println("Creating indices...");
-		qb.createIndices();
+		qb.createIndices(m_applyImages);
 		
 		System.out.println("vacuum... ");
 		qb.execute("VACUUM");

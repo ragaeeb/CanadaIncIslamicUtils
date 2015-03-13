@@ -13,10 +13,14 @@ import com.canadainc.islamicutils.io.NetworkBoundary;
 public class AyatDownloader
 {
 	private QuranArabicExtractor m_extractor;
+	private static final String QURAN_DOT_COM_HOST = "http://c00022506.cdn1.cloudfiles.rackspacecloud.com/";
+	private static final String EVERY_AYAH_HOST = "http://www.everyayah.com/data/quranpngs/";
+	private String m_host;
 	
-	public AyatDownloader(QuranArabicExtractor extractor)
+	public AyatDownloader(QuranArabicExtractor extractor, boolean highQuality)
 	{
 		m_extractor = extractor;
+		m_host = highQuality ? EVERY_AYAH_HOST : QURAN_DOT_COM_HOST;
 	}
 	
 	
@@ -33,7 +37,7 @@ public class AyatDownloader
 			{
 				try {
 					String name = surahId+"_"+i+".png";
-					NetworkBoundary.saveFile("http://c00022506.cdn1.cloudfiles.rackspacecloud.com/"+name, "res/quran10/ayats/"+name);
+					NetworkBoundary.saveFile(m_host+name, "res/quran10/ayats/"+name);
 				} catch (IOException e) {
 					System.out.println(surahId+","+i);
 					e.printStackTrace();

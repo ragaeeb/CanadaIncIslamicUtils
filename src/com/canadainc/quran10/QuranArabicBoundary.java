@@ -25,7 +25,7 @@ public class QuranArabicBoundary
 	}
 	
 	
-	public void createIndices() throws SQLException
+	public void createIndices(boolean enableImages) throws SQLException
 	{
 		execute("CREATE INDEX IF NOT EXISTS ayah_surah_index ON ayahs(surah_id,verse_number)");
 		execute("CREATE INDEX IF NOT EXISTS juz_index ON juzs(surah_id,verse_number)");
@@ -33,10 +33,14 @@ public class QuranArabicBoundary
 		execute("CREATE INDEX IF NOT EXISTS qarees_index ON qarees(level)");
 		execute("CREATE INDEX IF NOT EXISTS recitations_index ON recitations(qaree_id)");
 		execute("CREATE INDEX IF NOT EXISTS related_index ON related(surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id)");
+		
+		if (enableImages) {
+			execute("CREATE INDEX IF NOT EXISTS images_index ON images(surah_id,verse_number)");
+		}
 	}
 	
 	
-	public void createTable() throws SQLException
+	public void createTable(boolean enableImages) throws SQLException
 	{
 		execute("CREATE TABLE IF NOT EXISTS surahs (id INTEGER PRIMARY KEY, name TEXT, verse_count INTEGER, start INTEGER, type INTEGER, revelation_order INTEGER, rukus INTEGER)");
 		execute("CREATE TABLE IF NOT EXISTS ayahs (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content TEXT, searchable TEXT, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
@@ -49,8 +53,11 @@ public class QuranArabicBoundary
 		execute("CREATE TABLE IF NOT EXISTS supplications (surah_id INTEGER REFERENCES surahs(id), verse_number_start INTEGER, verse_number_end INTEGER, UNIQUE(surah_id,verse_number_start) ON CONFLICT REPLACE);");
 		execute("CREATE TABLE IF NOT EXISTS qarees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, bio TEXT, level INTEGER DEFAULT 1)");
 		execute("CREATE TABLE IF NOT EXISTS recitations (qaree_id INTEGER REFERENCES qarees(id) ON DELETE CASCADE, description TEXT, value TEXT NOT NULL)");
-		//execute("CREATE TABLE IF NOT EXISTS images (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, content BLOB, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE related (surah_id INTEGER NOT NULL REFERENCES surahs(id), from_verse_id INTEGER NOT NULL, to_verse_id INTEGER NOT NULL, other_surah_id INTEGER NOT NULL REFERENCES surahs(id), other_from_verse_id INTEGER NOT NULL, other_to_verse_id INTEGER NOT NULL, UNIQUE(surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id) ON CONFLICT IGNORE)");
+		
+		if (enableImages) {
+			execute("CREATE TABLE IF NOT EXISTS images (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, imageData BLOB, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
+		}
 	}
 	
 	
@@ -95,7 +102,7 @@ public class QuranArabicBoundary
 
 		if (listOfFiles != null)
 		{
-			PreparedStatement ps = m_connection.prepareStatement("INSERT INTO images (surah_id,verse_number,content) VALUES (?,?,?)");
+			PreparedStatement ps = m_connection.prepareStatement("INSERT INTO images (surah_id,verse_number,imageData) VALUES (?,?,?)");
 			
 			for (File f: listOfFiles)
 			{

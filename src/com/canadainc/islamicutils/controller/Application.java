@@ -73,7 +73,7 @@ public class Application
 	
 	public static void testPopulateArabicQuran()
 	{
-		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", "res/quran10/similar.txt", new String[]{"english"});
+		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", "res/quran10/similar.txt", new String[]{/*"turkish", "russian","malay"*/});
 
 		try {
 			qap.process();
@@ -86,7 +86,7 @@ public class Application
 	public static void testDownloadAyatImages()
 	{
 		try {
-			AyatDownloader a = new AyatDownloader( new QuranArabicExtractor("res/quran10/quran-data.xml") );
+			AyatDownloader a = new AyatDownloader( new QuranArabicExtractor("res/quran10/quran-data.xml"), true );
 			a.beginDownload();
 		} catch (Exception e) {
 			e.printStackTrace();
