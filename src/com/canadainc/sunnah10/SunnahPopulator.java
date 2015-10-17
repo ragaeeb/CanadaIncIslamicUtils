@@ -34,7 +34,7 @@ public class SunnahPopulator
 
 				for (File l: languages)
 				{
-					if ( l.isDirectory() )
+					if ( l.isDirectory() && ( l.getName().equals("arabic") || l.getName().equals("english") ) )
 					{
 						String language = l.getName();
 

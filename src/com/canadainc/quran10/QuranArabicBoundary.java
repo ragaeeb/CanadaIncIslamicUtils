@@ -51,7 +51,7 @@ public class QuranArabicBoundary
 		execute("CREATE TABLE IF NOT EXISTS sajdas (surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, type INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS mushaf_pages (page_number INTEGER PRIMARY KEY, surah_id INTEGER REFERENCES surahs(id), verse_number INTEGER, UNIQUE(surah_id,verse_number) ON CONFLICT REPLACE)");
 		execute("CREATE TABLE IF NOT EXISTS supplications (surah_id INTEGER REFERENCES surahs(id), verse_number_start INTEGER, verse_number_end INTEGER, UNIQUE(surah_id,verse_number_start) ON CONFLICT REPLACE);");
-		execute("CREATE TABLE IF NOT EXISTS qarees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, bio TEXT, level INTEGER DEFAULT 1)");
+		execute("CREATE TABLE IF NOT EXISTS qarees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, level INTEGER DEFAULT 1)");
 		execute("CREATE TABLE IF NOT EXISTS recitations (qaree_id INTEGER REFERENCES qarees(id) ON DELETE CASCADE, description TEXT, value TEXT NOT NULL)");
 		execute("CREATE TABLE related (surah_id INTEGER NOT NULL REFERENCES surahs(id), from_verse_id INTEGER NOT NULL, to_verse_id INTEGER NOT NULL, other_surah_id INTEGER NOT NULL REFERENCES surahs(id), other_from_verse_id INTEGER NOT NULL, other_to_verse_id INTEGER NOT NULL, UNIQUE(surah_id,from_verse_id,to_verse_id,other_surah_id,other_from_verse_id,other_to_verse_id) ON CONFLICT IGNORE)");
 		
@@ -214,7 +214,7 @@ public class QuranArabicBoundary
 		String content = IOUtils.readFileUtf8( new File(qareesCsv) );
 		String[] data = content.split("\n");
 		
-		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO qarees (id,name,level,bio) VALUES (?,?,?,?)");
+		PreparedStatement ps = m_connection.prepareStatement("INSERT INTO qarees (id,name,level) VALUES (?,?,?)");
 		
 		for (String s: data)
 		{
@@ -225,7 +225,6 @@ public class QuranArabicBoundary
 			ps.setInt( ++i, Integer.parseInt( tokens[0].substring(1) ) );
 			ps.setString( ++i, tokens[1] );
 			ps.setInt( ++i, Integer.parseInt(tokens[2]) );
-			ps.setString( ++i, tokens[3].substring( 0, tokens[3].length()-1 ) );
 			ps.addBatch();
 		}
 		

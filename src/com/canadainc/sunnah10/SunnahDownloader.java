@@ -11,43 +11,45 @@ import com.canadainc.islamicutils.io.NetworkBoundary;
 
 public class SunnahDownloader
 {
-	private Map<String,Integer> m_map = new HashMap<String,Integer>(13);
+	private Map<String,Integer> m_collectionToChapters = new HashMap<String,Integer>(13);
 	private Collection<String> m_languages = new ArrayList<String>(4);
 	private int m_total = 0;
 	
 	public SunnahDownloader()
 	{
-		m_map.put("bukhari", 97);
-		m_map.put("abudawud", 43);
-		m_map.put("muslim", 56);
-		m_map.put("nasai", 51);
-		m_map.put("tirmidhi", 49);
-		m_map.put("ibnmajah", 37);
-		m_map.put("malik", 61);
-		m_map.put("riyadussaliheen", 20);
-		m_map.put("adab", 56);
-		m_map.put("shamail", 56);
-		m_map.put("nawawi40", 1);
-		m_map.put("qudsi40", 1);
+		m_collectionToChapters.put("bukhari", 97);
+		m_collectionToChapters.put("abudawud", 43);
+		m_collectionToChapters.put("muslim", 56);
+		m_collectionToChapters.put("nasai", 51);
+		m_collectionToChapters.put("tirmidhi", 49);
+		m_collectionToChapters.put("ibnmajah", 37);
+		m_collectionToChapters.put("malik", 61);
+		m_collectionToChapters.put("riyadussaliheen", 20);
+		m_collectionToChapters.put("adab", 57);
+		//m_map.put("shamail", 56);
+		m_collectionToChapters.put("nawawi40", 1);
+		m_collectionToChapters.put("qudsi40", 1);
+		m_collectionToChapters.put("bulugh", 16);
+	}
+	
+	
+	public void addLanguage(String language)
+	{
+		m_languages.add(language);
 		
-		m_languages.add("arabic");
-		m_languages.add("english");
+		m_total = 0;
 		
-		for (int value: m_map.values() ) {
+		for (int value: m_collectionToChapters.values() ) {
 			m_total += value;
 		}
 		
 		m_total *= m_languages.size();
-		
-		/*m_map.put("bulugh", 16);
-		m_languages.add("indonesian");
-		m_languages.add("urdu"); */
 	}
 	
 	
 	public void startDownloading() throws FileNotFoundException, UnsupportedEncodingException
 	{
-		Collection<String> collections = m_map.keySet();
+		Collection<String> collections = m_collectionToChapters.keySet();
 		int count = 0;
 		
 		for (String book: collections)
@@ -68,7 +70,7 @@ public class SunnahDownloader
 					return;
 				}
 				
-				int entries = m_map.get(book);
+				int entries = m_collectionToChapters.get(book);
 				
 				for (int page = 1; page <= entries; page++)
 				{
@@ -80,7 +82,7 @@ public class SunnahDownloader
 					}
 				}
 				
-				if ( book.equals("ibnmajah") || book.equals("muslim") ) {
+				if ( book.equals("ibnmajah") || book.equals("muslim") ) { // get introduction page
 					++count;
 					generatePage(book, language, entries, -1, count);
 				}
@@ -92,7 +94,7 @@ public class SunnahDownloader
 	private boolean generatePage(String book, String language, int entries, int page, int count) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		File dir;
-		String fileName = page+".txt";
+		String fileName = page+SunnahConstants.CHAPTER_EXTENSION;
 		dir = new File("res/sunnah10/"+book+"/"+language+"/"+fileName);
 		
 		if ( !dir.exists() )
