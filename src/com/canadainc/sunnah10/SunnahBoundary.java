@@ -4,15 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +28,6 @@ public class SunnahBoundary
 	private ArrayList<String> m_columns;
 	private Connection m_connection;
 	private Connection m_gradeConnection;
-	private DateFormat m_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	private String m_language;
 	static {
 		adabArabicChapterNames.put(1, "كتاب الْوَالِدَيْنِ");
@@ -199,6 +194,7 @@ public class SunnahBoundary
 
 			for (String jsonData: jsonContents)
 			{
+				System.out.println(jsonData);
 				Object obj = JSONValue.parse(jsonData);
 				JSONArray array = (JSONArray)obj;
 
@@ -261,7 +257,6 @@ public class SunnahBoundary
 					ps.setString( ++i, getHadithNumber(json) );
 					ps.setString( ++i, readSanitizedString(json, "hadithText").trim() );
 					ps.setInt( ++i, bookID );
-					//ps.setLong( ++i, readDate(json, "last_updated") );
 					
 					int arabicURN = 0;
 					
@@ -363,17 +358,6 @@ public class SunnahBoundary
 	}
 	private boolean isNonArabicLanguage() {
 		return !m_language.equals("arabic");
-	}
-
-	private final long readDate(JSONObject json, String key) throws ParseException
-	{
-		String toConvert = (String)json.get(key);
-
-		if (toConvert == null) {
-			return 0;
-		} else {
-			return m_format.parse(toConvert).getTime();
-		}
 	}
 	
 	private static final String getPrimaryKey(JSONObject json)

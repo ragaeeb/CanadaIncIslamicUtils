@@ -62,6 +62,10 @@ public class Application
 	public static void testDownloadDatabase()
 	{
 		SunnahDownloader sd = new SunnahDownloader();
+		sd.addLanguage("english");
+		sd.addLanguage("arabic");
+		sd.addLanguage("indonesian");
+		sd.addLanguage("urdu");
 
 		try {
 			sd.startDownloading();
@@ -97,8 +101,8 @@ public class Application
 	public static void main(String[] args)
 	{
 		//testDownloadDatabase();
-		//testHadith();
-		testPopulateArabicQuran();
+		testHadith();
+		//testPopulateArabicQuran();
 		//testDownloadAyatImages();
 	}
 }
