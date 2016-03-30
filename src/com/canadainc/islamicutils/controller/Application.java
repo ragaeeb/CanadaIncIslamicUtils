@@ -8,7 +8,6 @@ import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
 import com.canadainc.quran10.ibnkatheer.TafsirController;
-import com.canadainc.sunnah10.SunnahDownloader;
 import com.canadainc.sunnah10.SunnahPopulator;
 
 public class Application
@@ -58,22 +57,6 @@ public class Application
 		}
 	}
 
-
-	public static void testDownloadDatabase()
-	{
-		SunnahDownloader sd = new SunnahDownloader();
-		sd.addLanguage("english");
-		sd.addLanguage("arabic");
-		sd.addLanguage("indonesian");
-		sd.addLanguage("urdu");
-
-		try {
-			sd.startDownloading();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	
 	public static void testPopulateArabicQuran()
 	{
@@ -100,7 +83,6 @@ public class Application
 
 	public static void main(String[] args)
 	{
-		//testDownloadDatabase();
 		testHadith();
 		//testPopulateArabicQuran();
 		//testDownloadAyatImages();
