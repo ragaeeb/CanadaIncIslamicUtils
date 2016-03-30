@@ -2,20 +2,18 @@ package com.canadainc.sunnah10;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import com.canadainc.islamicutils.io.DBUtils;
 
 public class SunnahDatabaseBoundary
 {
 	private SunnahPrimaryTable<String> m_collections;
 	private SunnahPrimaryTable<Chapter> m_chapters;
 	private SunnahBooksTable m_books;
+	private SunnahGradeTable m_grades;
+	private SunnahNarrationsTable m_narrations;
 
 	public SunnahDatabaseBoundary(String path) throws SQLException
 	{
@@ -30,6 +28,12 @@ public class SunnahDatabaseBoundary
 
 		m_books = new SunnahBooksTable(m_collections);
 		m_books.setConnection(connection);
+		
+		m_grades = new SunnahGradeTable();
+		m_grades.setConnection(connection);
+		
+		m_narrations = new SunnahNarrationsTable(m_collections, m_chapters);
+		m_narrations.setConnection(connection);
 	}
 
 
@@ -38,18 +42,8 @@ public class SunnahDatabaseBoundary
 		m_collections.process( collectionToBooks.keySet() );
 		m_chapters.process(chapters);
 		m_books.process(collectionToBooks);
-
-		/*
-		ArrayList<String> columns = new ArrayList<String>();
-		columns.add("id INTEGER PRIMARY KEY");
-		columns.add("collection TEXT");
-		columns.add("bookName TEXT");
-		columns.add("babNumber INTEGER");
-		columns.add("babName TEXT");
-		columns.add("inBookNumber INTEGER");
-		columns.add("hadithNumber TEXT");
-		columns.add("hadithText TEXT");
-		columns.add("bookID INTEGER"); */
+		m_grades.process(grades);
+		m_narrations.process(collectionToNarrations);
 	}
 
 
@@ -58,5 +52,7 @@ public class SunnahDatabaseBoundary
 		m_collections.setLanguage(language);
 		m_books.setLanguage(language);
 		m_chapters.setLanguage(language);
+		m_grades.setLanguage(language);
+		m_narrations.setLanguage(language);
 	}
 }

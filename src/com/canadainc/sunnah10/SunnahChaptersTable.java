@@ -25,7 +25,7 @@ public class SunnahChaptersTable implements SunnahPrimaryTable<Chapter>
 	{
 		ArrayList<String> columns = new ArrayList<String>();
 		columns.add("id INTEGER PRIMARY KEY");
-		columns.add("number INTEGER NOT NULL");
+		columns.add("number INTEGER");
 		columns.add("title TEXT NOT NULL");
 
 		DBUtils.createTable(m_connection, getTableName(), columns);
@@ -38,7 +38,7 @@ public class SunnahChaptersTable implements SunnahPrimaryTable<Chapter>
 		{
 			int i = 0;
 			ps.setInt(++i, ++x);
-			ps.setInt(++i, c.number);
+			DBUtils.setNullInt(++i, c.number, ps);
 			ps.setString(++i, c.title);
 			ps.execute();
 			

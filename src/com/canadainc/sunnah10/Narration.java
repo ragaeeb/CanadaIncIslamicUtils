@@ -15,19 +15,6 @@ public class Narration implements Comparable<Narration>
 	@Override
 	public int hashCode() {
 		return id;
-		/*
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + arabicId;
-		result = prime * result + ((babName == null) ? 0 : babName.hashCode());
-		result = prime * result + babNumber;
-		result = prime * result + bookId;
-		result = prime * result + ((bookName == null) ? 0 : bookName.hashCode());
-		result = prime * result + ((hadithNumber == null) ? 0 : hadithNumber.hashCode());
-		result = prime * result + id;
-		result = prime * result + inBookNumber;
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		return result; */
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -87,6 +74,12 @@ public class Narration implements Comparable<Narration>
 		this.id = id;
 		this.inBookNumber = inBookNumber;
 		this.text = text;
+	}
+	
+	public Narration(int arabicId, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
+			int id, int inBookNumber, String text, int translator) {
+		this(arabicId, babName, babNumber, bookId, bookName, hadithNumber, id, inBookNumber, text);
+		this.translator = translator;
 	}
 
 	@Override

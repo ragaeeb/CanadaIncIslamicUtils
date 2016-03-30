@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,6 +24,16 @@ public class DBUtils
 	{
 		new File(db).delete();
 		new File(db+"-journal").delete();
+	}
+	
+	
+	public static void setNullInt(int i, int value, PreparedStatement ps) throws SQLException
+	{
+		if (value == 0) {
+			ps.setNull(i, Types.INTEGER);
+		} else {
+			ps.setInt(i, value);
+		}
 	}
 	
 	
