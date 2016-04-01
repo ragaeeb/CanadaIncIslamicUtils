@@ -30,7 +30,7 @@ public class SunnahNarrationsTable implements SunnahTable
 		columns.add("id INTEGER PRIMARY KEY");
 		columns.add("collection_id INTEGER NOT NULL");
 		columns.add("book_id INTEGER NOT NULL");
-		columns.add("chapter_id INTEGER NOT NULL");
+		columns.add("chapter_id INTEGER");
 		columns.add("in_book_number INTEGER");
 		columns.add("hadith_number TEXT");
 		columns.add("body TEXT");
@@ -46,17 +46,20 @@ public class SunnahNarrationsTable implements SunnahTable
 
 			for (Narration n: narrations)
 			{
-				int i = 0;
-				ps.setInt(++i, m_arabic ? n.id : n.arabicId); // use the arabic id so we can link at runtime
-				ps.setInt(++i, m_collections.getIdFor(collection));
-				ps.setInt(++i, n.book.id);
-				ps.setInt(++i, m_chapters.getIdFor(n.chapter));
-				DBUtils.setNullInt(++i, n.inBookNumber, ps);
-				ps.setString(++i, n.hadithNumber);
-				ps.setString(++i, n.text);
-				DBUtils.setNullInt(++i, n.translator, ps);
-
-				ps.execute();
+				if ( !m_arabic && n.arabicId == 0 ) {
+					// skip
+				} else {
+					int i = 0;
+					ps.setInt(++i, m_arabic ? n.id : n.arabicId); // use the arabic id so we can link at runtime
+					ps.setInt(++i, m_collections.getIdFor(collection));
+					DBUtils.setNullInt(++i, n.book.id, ps);
+					DBUtils.setNullInt(++i, m_chapters.getIdFor(n.chapter), ps);
+					DBUtils.setNullInt(++i, n.inBookNumber, ps);
+					ps.setString(++i, n.hadithNumber);
+					ps.setString(++i, n.text);
+					DBUtils.setNullInt(++i, n.translator, ps);
+					ps.execute();
+				}
 			}
 		}
 
@@ -78,5 +81,18 @@ public class SunnahNarrationsTable implements SunnahTable
 	@Override
 	public void setConnection(Connection c) {
 		m_connection = c;
+	}
+	
+	Connection getConnection() {
+		return m_connection;
+	}
+
+
+	@Override
+	public void createIndices() throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS narrations_index ON narrations(collection_id,book_id,chapter_id,hadith_number)");
+		ps.execute();
+		ps.close();
 	}
 }

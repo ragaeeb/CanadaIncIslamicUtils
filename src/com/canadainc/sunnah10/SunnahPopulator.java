@@ -3,19 +3,13 @@ package com.canadainc.sunnah10;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class SunnahPopulator
 {
-	/** (Key: Language, Value: [<Key: Collection, Value: Translator>]) */
-	private Map< String, Map<String, Integer> > m_translations;
-
 	private BookCollector m_bookCollector;
 
 	private GradeCollector m_gradeCollector;
@@ -23,22 +17,16 @@ public class SunnahPopulator
 	private ChapterCollector m_chapterCollector;
 
 	private NarrationCollector m_narrationCollector;
-	
 
-	public SunnahPopulator()
+	private SunnahDatabaseBoundary m_db;
+
+	private String m_srcPath;
+
+	private String m_language;
+
+
+	public SunnahPopulator(String language, String sourcePath) throws SQLException
 	{
-		
-		
-		Map<String, Integer> english = new HashMap<String, Integer>();
-		english.put("bukhari", -10); // Dr. M. Muhsin Khan
-		english.put("muslim", -11); // Abdul Hamid Siddiqui
-		english.put("abudawud", -12); // Ahmad Hasan
-		english.put("malik", -13); // `A'isha `Abdarahman at-Tarjumana and Ya`qub Johnson
-		english.put("adab", -14); // Muhammad b. Isma'il al- Bujari
-
-		m_translations = new HashMap<String, Map<String, Integer> >(1);
-		m_translations.put("english", english);
-
 		Dictionary d = new Dictionary();
 		m_bookCollector = new BookCollector();
 		m_gradeCollector = new GradeCollector();
@@ -48,6 +36,11 @@ public class SunnahPopulator
 		m_bookCollector.setDictionary(d);
 		m_chapterCollector.setDictionary(d);
 		m_narrationCollector.setDictionary(d);
+
+		m_language = language;
+		m_srcPath = sourcePath;
+		m_db = new SunnahDatabaseBoundary(sourcePath+"/sunnah_"+language+".db");
+		m_db.setLanguage(language);
 	}
 
 	/**
@@ -58,65 +51,47 @@ public class SunnahPopulator
 	 */
 	public void process() throws Exception
 	{
-		CollectionFilter sf = new CollectionFilter();
 		PagesFilter pf = new PagesFilter();
-		File root = new File("res/sunnah10");
-		File[] languages = root.listFiles(sf);
+		File root = new File(m_srcPath+"/"+m_language);
+		File[] collections = root.listFiles( new CollectionFilter() );
+		SunnahReader reader = new SunnahReader();
 
-		for (File l: languages)
+		long now = System.currentTimeMillis();
+		System.out.println("Reading collections: "+m_language);
+
+		for (File c: collections)
 		{
-			File[] collections = l.listFiles(sf);
-			Map<String, Integer> translators = m_translations.get( l.getName() );
-			boolean arabic = l.getName().equals("arabic");
-			SunnahReader reader = new SunnahReader( arabic ? "arabicURN" : "englishURN" );
+			File[] chapters = c.listFiles(pf);
+			String collection = c.getName();
 
-			for (File c: collections)
+			for (File chapter: chapters)
 			{
-				File[] chapters = c.listFiles(pf);
-				int translator = 0;
-				String collection = c.getName();
+				Collection<Narration> currentNarrations = reader.readNarrations(chapter);
 
-				if ( translators != null && translators.containsKey(collection) ) {
-					translator = translators.get(collection);
-				}
-
-				for (File chapter: chapters)
-				{
-					Collection<Narration> currentNarrations = reader.readNarrations(chapter);
-
-					for (Narration n: currentNarrations) {
-						n.translator = translator;
-					}
-
-					m_narrationCollector.process(currentNarrations, arabic, collection);
-					//m_narratorCollector.process(currentNarrations, arabic, collection);
-					m_bookCollector.process(currentNarrations, arabic, collection);
-					m_gradeCollector.process(currentNarrations, arabic, collection);
-					m_chapterCollector.process(currentNarrations, arabic, collection);
-				}
+				m_narrationCollector.process(currentNarrations, m_language, collection);
+				m_bookCollector.process(currentNarrations, m_language, collection);
+				m_gradeCollector.process(currentNarrations, m_language, collection);
+				m_chapterCollector.process(currentNarrations, m_language, collection);
 			}
 		}
+
+		System.out.println("Collections loaded in memory: "+(System.currentTimeMillis()-now)+" ms");
+
+		m_db.process( m_bookCollector.getCollected(), m_chapterCollector.getCollected(), m_gradeCollector.getCollected(), m_narrationCollector.getCollected() );
+		System.out.println("Finished: "+m_language+"\n");
 	}
 
 
-	public Map< String, Set<Book> > getBooks() {
-		return m_bookCollector.getCollected();
+	Connection getConnection() {
+		return m_db.getConnection();
 	}
 
 
-	public Map<Integer, Grade> getGrades() {
-		return m_gradeCollector.getCollected();
+	public void close() throws SQLException {
+		m_db.close();
 	}
 
 
-	public Collection<Chapter> getChapters() {
-		return m_chapterCollector.getCollected();
-	}
-
-	public Map<String, Collection<Narration>> getNarrations() {
-		return m_narrationCollector.getCollected();
-	}
-	
 	private class CollectionFilter implements FilenameFilter
 	{
 		private Collection<String> m_interested;
@@ -124,8 +99,6 @@ public class SunnahPopulator
 		public CollectionFilter()
 		{
 			m_interested = new HashSet<String>();
-			//m_interested.add("arabic");
-			m_interested.add("english");
 			m_interested.add("abudawud");
 			m_interested.add("adab");
 			m_interested.add("bulugh");

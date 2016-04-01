@@ -76,4 +76,13 @@ public class SunnahBooksTable implements SunnahTable
 	public void setConnection(Connection c) {
 		m_connection = c;
 	}
+
+
+	@Override
+	public void createIndices() throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS books_index ON books(collection_id,book_id)");
+		ps.execute();
+		ps.close();
+	}
 }

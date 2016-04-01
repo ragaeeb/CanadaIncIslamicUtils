@@ -36,13 +36,16 @@ public class SunnahChaptersTable implements SunnahPrimaryTable<Chapter>
 		
 		for (Chapter c: chapters)
 		{
-			int i = 0;
-			ps.setInt(++i, ++x);
-			DBUtils.setNullInt(++i, c.number, ps);
-			ps.setString(++i, c.title);
-			ps.execute();
-			
-			m_chapterToId.put(c,x);
+			if ( c.title != null && !c.title.isEmpty() )
+			{
+				int i = 0;
+				ps.setInt(++i, ++x);
+				DBUtils.setNullInt(++i, c.number, ps);
+				ps.setString(++i, c.title);
+				ps.execute();
+				
+				m_chapterToId.put(c,x);
+			}
 		}
 		
 		m_connection.commit();
@@ -74,4 +77,10 @@ public class SunnahChaptersTable implements SunnahPrimaryTable<Chapter>
 
 	@Override
 	public void setLanguage(String language) {}
+
+
+	@Override
+	public void createIndices() throws SQLException
+	{
+	}
 }

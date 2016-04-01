@@ -27,7 +27,7 @@ public class NarratorCollector implements Collector
 	 * @see com.canadainc.sunnah10.Collector#process(java.util.Collection, boolean, java.lang.String)
 	 */
 	@Override
-	public void process(Collection<Narration> narrations, boolean arabic, String collection)
+	public void process(Collection<Narration> narrations, String language, String collection)
 	{
 		int narratedLength = "Narrated: ".length();
 

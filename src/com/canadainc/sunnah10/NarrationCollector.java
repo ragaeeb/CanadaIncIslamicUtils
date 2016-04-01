@@ -4,18 +4,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.text.WordUtils;
 
 public class NarrationCollector implements Collector
 {
+	/** (Key: Language, Value: [<Key: Collection, Value: Translator>]) */
+	private Map< String, Map<String, Integer> > m_translations;
+
 	private Dictionary m_dictionary;
 	private Map<String, Collection<Narration>> m_narrations;
 
-	public NarrationCollector() {
+	public NarrationCollector()
+	{
 		m_narrations = new HashMap<String, Collection<Narration>>(8);
+
+		Map<String, Integer> english = new HashMap<String, Integer>();
+		english.put("bukhari", -10); // Dr. M. Muhsin Khan
+		english.put("muslim", -11); // Abdul Hamid Siddiqui
+		english.put("abudawud", -12); // Ahmad Hasan
+		english.put("malik", -13); // `A'isha `Abdarahman at-Tarjumana and Ya`qub Johnson
+		english.put("adab", -14); // Muhammad b. Isma'il al- Bujari
+
+		m_translations = new HashMap<String, Map<String, Integer> >(1);
+		m_translations.put("english", english);
 	}
 
 	@Override
@@ -23,17 +33,24 @@ public class NarrationCollector implements Collector
 	 * (non-Javadoc)
 	 * @see com.canadainc.sunnah10.Collector#process(java.util.Collection, boolean, java.lang.String)
 	 */
-	public void process(Collection<Narration> narrations, boolean arabic, String collection)
+	public void process(Collection<Narration> narrations, String language, String collection)
 	{
 		String lastBabName = null;
 		int lastBabNum = 0;
-		
+
 		Collection<Narration> contents = m_narrations.get(collection);
-		
+
 		if (contents == null) {
 			contents = new ArrayList<Narration>();
 		}
-		
+
+		int translator = 0;
+		Map<String, Integer> translators = m_translations.get(language);
+
+		if ( translators != null && translators.containsKey(collection) ) {
+			translator = translators.get(collection);
+		}
+
 		for (Narration n: narrations)
 		{
 			if ( n.chapter.title == null || n.chapter.title.isEmpty() ) {
@@ -41,13 +58,14 @@ public class NarrationCollector implements Collector
 				n.chapter.number = lastBabNum;
 			}
 
+			n.translator = translator;
 			lastBabName = n.chapter.title;
 			lastBabNum = n.chapter.number;
 
 			correctHadithNumber(n);
-			correctHadithBody(n, arabic);
+			correctHadithBody(n, language.equals(SunnahConstants.LANGUAGE_ARABIC));
 		}
-		
+
 		contents.addAll(narrations);
 		m_narrations.put(collection, contents);
 	}
@@ -64,7 +82,7 @@ public class NarrationCollector implements Collector
 		if (!arabic)
 		{
 			toConvert = toConvert.replaceAll("\\(S\\)|\\[SAW\\]|\\([sS]\\.[aA]\\.[wW]\\)|\\(SAW0{0,1}\\)|\\(saws\\)|SAW0|\\({0,1}SWAS\\){0,1}|\\(saW\\)|\\(saas\\)|[pP]\\.[bB]\\.[uU]\\.[hH]\\.{0,1}|pbuh", "ﷺ");
-			
+
 			if (m_dictionary != null) {
 				toConvert = m_dictionary.correctTypos(toConvert);
 			}
@@ -112,8 +130,8 @@ public class NarrationCollector implements Collector
 	public void setDictionary(Dictionary d) {
 		m_dictionary = d;
 	}
-	
-	
+
+
 	public Map<String, Collection<Narration>> getCollected() {
 		return m_narrations;
 	}

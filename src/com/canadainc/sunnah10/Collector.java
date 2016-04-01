@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface Collector
 {
-	void process(Collection<Narration> narrations, boolean arabic, String collection);
+	void process(Collection<Narration> narrations, String language, String collection);
 	
 	void setDictionary(Dictionary d);
 }

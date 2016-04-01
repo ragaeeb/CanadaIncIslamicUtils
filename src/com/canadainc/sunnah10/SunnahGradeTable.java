@@ -77,4 +77,13 @@ public class SunnahGradeTable implements SunnahTable
 	 */
 	@Override
 	public void setLanguage(String language) {}
+
+
+	@Override
+	public void createIndices() throws SQLException
+	{
+		PreparedStatement ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS grades_index ON grades(narration_id,author_id)");
+		ps.execute();
+		ps.close();
+	}
 }

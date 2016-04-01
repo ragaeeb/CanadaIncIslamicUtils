@@ -1,5 +1,6 @@
 package com.canadainc.islamicutils.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.canadainc.quran10.AyatDownloader;
@@ -46,18 +47,24 @@ public class Application
 
 	public static void testHadith()
 	{
-		SunnahPopulator m_instance = new SunnahPopulator();
-
 		try {
 			Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
+
+			new File("res/sunnah_english.db").delete();
+			SunnahPopulator sp = new SunnahPopulator("english", "res/sunnah10");
+			sp.process();
+			sp.close();
 			
-			m_instance.process();
+			new File("res/sunnah_arabic.db").delete();
+			sp = new SunnahPopulator("arabic", "res/sunnah10");
+			sp.process();
+			sp.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	
+
 	public static void testPopulateArabicQuran()
 	{
 		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", "res/quran10/similar.txt", new String[]{/*"turkish", "russian","malay"*/});
@@ -68,8 +75,8 @@ public class Application
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public static void testDownloadAyatImages()
 	{
 		try {
@@ -79,7 +86,7 @@ public class Application
 			e.printStackTrace();
 		}
 	}
-	
+
 
 	public static void main(String[] args)
 	{

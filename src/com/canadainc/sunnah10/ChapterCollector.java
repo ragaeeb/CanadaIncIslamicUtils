@@ -21,7 +21,7 @@ public class ChapterCollector implements Collector
 	}
 
 	@Override
-	public void process(Collection<Narration> narrations, boolean arabic, String collection)
+	public void process(Collection<Narration> narrations, String language, String collection)
 	{
 		for (Narration n: narrations)
 		{

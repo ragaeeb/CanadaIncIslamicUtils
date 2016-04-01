@@ -27,7 +27,7 @@ public class GradeCollector implements Collector
 	 * (non-Javadoc)
 	 * @see com.canadainc.sunnah10.Collector#process(java.util.Collection, boolean, java.lang.String)
 	 */
-	public void process(Collection<Narration> narrations, boolean arabic, String collection)
+	public void process(Collection<Narration> narrations, String language, String collection)
 	{
 		if ( m_collectionToAuthor.containsKey(collection) )
 		{

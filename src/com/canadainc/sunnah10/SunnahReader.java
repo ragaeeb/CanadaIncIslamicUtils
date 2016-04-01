@@ -13,13 +13,8 @@ import com.canadainc.common.io.IOUtils;
 
 public class SunnahReader
 {
-	private static final String KEY_GRADE_2 = "grade2";
-	private static final String KEY_GRADE_1 = "grade1";
-	private String m_primaryKey;
-
-	public SunnahReader(String pk)
+	public SunnahReader()
 	{
-		m_primaryKey = pk;
 	}
 
 
@@ -40,6 +35,19 @@ public class SunnahReader
 		return narrations;
 	}
 
+	
+	private static final Object extractAvailable(String[] keys, JSONObject json)
+	{
+		for (String key: keys)
+		{
+			if ( json.containsKey(key) ) {
+				return json.get(key);
+			}
+		}
+		
+		return null;
+	}
+	
 
 	public Narration parseNarration(JSONObject json)
 	{
@@ -49,13 +57,9 @@ public class SunnahReader
 		n.book = new Book( readInt(json, "bookID"), (String)json.get("bookName") );
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
-		n.id = readInt(json, m_primaryKey);
 		n.text = (String)json.get("hadithText");
-		n.grading = (String)json.get(KEY_GRADE_1);
-
-		if ( ( n.grading == null || n.grading.isEmpty() ) && json.containsKey(KEY_GRADE_2) ) {
-			n.grading = (String)json.get(KEY_GRADE_2);
-		}
+		n.grading = (String)extractAvailable(new String[]{"grade1", "grade2"}, json);
+		n.id = Integer.parseInt( (String)extractAvailable(new String[]{"arabicURN", "englishURN"}, json) );
 
 		return n;
 	}

@@ -99,4 +99,10 @@ public class SunnahCollectionsTable implements SunnahPrimaryTable<String>
 		m_codeToCollection.put("riyadussaliheen", new SunnahCollection(11,1, arabic ? "رياض الصالحين" : "Riyad as-Salihin") );
 		m_codeToCollection.put("tirmidhi", new SunnahCollection(12,1, arabic ? "جامع الترمذي" : "Jami` at-Tirmidhi") );
 	}
+
+
+	@Override
+	public void createIndices() throws SQLException
+	{
+	}
 }

@@ -48,7 +48,7 @@ public class BookCollector implements Collector
 		adabArabicBookNames.put(49, "كتاب الصباح والمساء");
 		adabArabicBookNames.put(51, "كتاب الْبَهَائِمِ");
 		adabArabicBookNames.put(53, "كتاب الْخِتَانِ");
-		
+
 		m_bookNames = new HashMap<String,Set<Book>>();
 	}
 
@@ -57,7 +57,7 @@ public class BookCollector implements Collector
 	 * (non-Javadoc)
 	 * @see com.canadainc.sunnah10.Collector#process(java.util.Collection, boolean, java.lang.String)
 	 */
-	public void process(Collection<Narration> narrations, boolean arabic, String collection)
+	public void process(Collection<Narration> narrations, String language, String collection)
 	{
 		Set<Book> names = m_bookNames.get(collection);
 
@@ -67,16 +67,17 @@ public class BookCollector implements Collector
 
 		for (Narration n: narrations)
 		{
-			correctBook(n, arabic, collection);
+			correctBook(n, language, collection);
 			names.add(n.book);
 		}
 
 		m_bookNames.put(collection, names);
 	}
 
-	
-	public void correctBook(Narration n, boolean arabic, String collection)
+
+	public void correctBook(Narration n, String language, String collection)
 	{
+		boolean arabic = language.equals("arabic");
 		String bookName = n.book.name;
 		int bookID = n.book.id;
 
@@ -97,7 +98,7 @@ public class BookCollector implements Collector
 			if ( bookName.equalsIgnoreCase("ok") && arabic && collection.equals("adab") )
 			{
 				bookName = adabArabicBookNames.get(bookID);
-				
+
 				if (bookName == null) {
 					bookName = "كتاب";
 				}
@@ -130,7 +131,7 @@ public class BookCollector implements Collector
 		} else {
 			n.book.name = bookName.trim();
 		}
-		
+
 		// 55: Virtues And Merits Of The Prophet (Pbuh)
 		// 60: Prophetic Commentary On The Qur'an (Tafseer Of The Prophet (pbuh)
 		// 38: Setting Free And Wala\'
@@ -179,7 +180,7 @@ public class BookCollector implements Collector
 		//0; Chapter 1
 		//0; Chapter 5: Exhortation To Have Good Morals
 	}
-	
+
 
 	public Map< String, Set<Book> > getCollected() {
 		return m_bookNames;
