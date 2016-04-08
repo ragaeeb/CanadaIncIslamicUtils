@@ -1,14 +1,16 @@
 package com.canadainc.sunnah10;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NarrationCollector implements Collector
 {
 	/** (Key: Language, Value: [<Key: Collection, Value: Translator>]) */
-	private Map< String, Map<String, Integer> > m_translations;
+	private Map< String, Map<String, List<Integer>> > m_translations;
 
 	private Dictionary m_dictionary;
 	private Map<String, Collection<Narration>> m_narrations;
@@ -17,14 +19,13 @@ public class NarrationCollector implements Collector
 	{
 		m_narrations = new HashMap<String, Collection<Narration>>(8);
 
-		Map<String, Integer> english = new HashMap<String, Integer>();
-		english.put("bukhari", -10); // Dr. M. Muhsin Khan
-		english.put("muslim", -11); // Abdul Hamid Siddiqui
-		english.put("abudawud", -12); // Ahmad Hasan
-		english.put("malik", -13); // `A'isha `Abdarahman at-Tarjumana and Ya`qub Johnson
-		english.put("adab", -14); // Muhammad b. Isma'il al- Bujari
+		Map<String, List<Integer>> english = new HashMap<String, List<Integer>>();
+		english.put("bukhari", Arrays.asList(1988)); // Dr. M. Muhsin Khan
+		english.put("muslim", Arrays.asList(1989)); // Abdul Hamid Siddiqui
+		english.put("abudawud", Arrays.asList(1990)); // Ahmad Hasan
+		english.put("malik", Arrays.asList(1991,1992)); // `A'isha `Abdarahman at-Tarjumana and Ya`qub Johnson
 
-		m_translations = new HashMap<String, Map<String, Integer> >(1);
+		m_translations = new HashMap<String, Map<String, List<Integer>> >(1);
 		m_translations.put("english", english);
 	}
 
@@ -45,10 +46,12 @@ public class NarrationCollector implements Collector
 		}
 
 		int translator = 0;
-		Map<String, Integer> translators = m_translations.get(language);
+		Map<String, List<Integer>> translators = m_translations.get(language);
 
-		if ( translators != null && translators.containsKey(collection) ) {
-			translator = translators.get(collection);
+		if ( translators != null && translators.containsKey(collection) )
+		{
+			List<Integer> available = translators.get(collection);
+			translator = available.get( (int)Math.random()*available.size() ); // assume random value from collections with multiple translators
 		}
 
 		for (Narration n: narrations)
