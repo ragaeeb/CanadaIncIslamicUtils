@@ -9,6 +9,7 @@ import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
 import com.canadainc.quran10.ibnkatheer.TafsirController;
+import com.canadainc.sunnah10.SunnahAdminDatabase;
 import com.canadainc.sunnah10.SunnahPopulator;
 
 public class Application
@@ -50,15 +51,20 @@ public class Application
 		try {
 			Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
 
-			new File("res/sunnah_english.db").delete();
+			new File("res/sunnah10/sunnah_english.db").delete();
 			SunnahPopulator sp = new SunnahPopulator("english", "res/sunnah10");
 			sp.process();
 			sp.close();
 			
-			new File("res/sunnah_arabic.db").delete();
+			new File("res/sunnah10/sunnah_arabic.db").delete();
 			sp = new SunnahPopulator("arabic", "res/sunnah10");
 			sp.process();
 			sp.close();
+			
+			new File("res/sunnah10/sunnah10.db").delete();
+			SunnahAdminDatabase sad = new SunnahAdminDatabase("res/sunnah10/sunnah10.db", "res/sunnah10/sunnah_arabic.db", "res/sunnah10/sunnah_english.db");
+			sad.process();
+			sad.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -84,5 +84,7 @@ public class SunnahBooksTable implements SunnahTable
 		PreparedStatement ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS books_index ON books(collection_id,book_id)");
 		ps.execute();
 		ps.close();
+		
+		m_connection.commit();
 	}
 }

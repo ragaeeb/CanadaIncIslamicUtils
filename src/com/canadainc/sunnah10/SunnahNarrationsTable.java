@@ -94,5 +94,7 @@ public class SunnahNarrationsTable implements SunnahTable
 		PreparedStatement ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS narrations_index ON narrations(collection_id,book_id,chapter_id,hadith_number)");
 		ps.execute();
 		ps.close();
+		
+		m_connection.commit();
 	}
 }
