@@ -89,7 +89,7 @@ public class SunnahCollectionsTable implements SunnahPrimaryTable<String>
 		m_codeToCollection.put("abudawud", new SunnahCollection(1,52, arabic ? "سنن أبي داود" : "Sunan Abi Dawud") );
 		m_codeToCollection.put("adab", new SunnahCollection(2,109, arabic ? "الأدب المفرد" : "Adab Al-Mufrad") );
 		m_codeToCollection.put("bukhari", new SunnahCollection(3,109, arabic ? "صحيح البخاري" : "Sahih al-Bukhari") );
-		m_codeToCollection.put("bulugh", new SunnahCollection(4,168, arabic ? "بلوغ المرام" : "Bulugh al-Maram") );
+		m_codeToCollection.put(SunnahConstants.COLLECTION_BULUGH_MARAM, new SunnahCollection(4,168, arabic ? "بلوغ المرام" : "Bulugh al-Maram") );
 		m_codeToCollection.put("ibnmajah", new SunnahCollection(5,622, arabic ? "سنن ابن ماجه" : "Sunan Ibn Majah") );
 		m_codeToCollection.put("malik", new SunnahCollection(6,79, arabic ? "موطأ مالك" : "Muwatta Malik") );
 		m_codeToCollection.put("muslim", new SunnahCollection(7,129, arabic ? "صحيح مسلم" : "Sahih Muslim") );

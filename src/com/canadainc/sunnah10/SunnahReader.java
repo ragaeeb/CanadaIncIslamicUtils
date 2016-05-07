@@ -1,6 +1,7 @@
 package com.canadainc.sunnah10;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,6 @@ import com.canadainc.common.io.IOUtils;
 
 public class SunnahReader
 {
-	public SunnahReader()
-	{
-	}
-
-
 	public List<Narration> readNarrations(File filePath) throws IOException
 	{
 		ArrayList<Narration> narrations = new ArrayList<Narration>();
@@ -51,6 +47,8 @@ public class SunnahReader
 
 	public Narration parseNarration(JSONObject json)
 	{
+		// TODO: take a look at html of: 128330
+		
 		Narration n = new Narration();
 		n.arabicId = readInt(json, "matchingArabicURN");
 		n.chapter = new Chapter( (String)json.get("babName"), readInt(json, "babNumber") );

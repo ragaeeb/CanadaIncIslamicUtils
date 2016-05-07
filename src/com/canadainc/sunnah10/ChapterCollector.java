@@ -83,6 +83,15 @@ public class ChapterCollector implements Collector
 		} else {
 			babName = null;
 		}
+		
+		if (babName != null)
+		{
+			babName = babName.trim();
+			
+			if ( babName.equals("باب") || babName.equals("باب ‏)‏‏)‏") ) {
+				babName = null;
+			}
+		}
 
 		n.chapter.title = babName;
 	}

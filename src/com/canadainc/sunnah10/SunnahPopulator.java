@@ -17,6 +17,8 @@ public class SunnahPopulator
 	private ChapterCollector m_chapterCollector;
 
 	private NarrationCollector m_narrationCollector;
+	
+	private BulughMaramDatabase m_bulugh;
 
 	private SunnahDatabaseBoundary m_db;
 
@@ -36,6 +38,9 @@ public class SunnahPopulator
 		m_bookCollector.setDictionary(d);
 		m_chapterCollector.setDictionary(d);
 		m_narrationCollector.setDictionary(d);
+		
+		m_bulugh = new BulughMaramDatabase(sourcePath+"/static_bulugh.db");
+		m_bulugh.setLanguage(language);
 
 		m_language = language;
 		m_srcPath = sourcePath;
@@ -74,6 +79,12 @@ public class SunnahPopulator
 				m_chapterCollector.process(currentNarrations, m_language, collection);
 			}
 		}
+		
+		Collection<Narration> currentNarrations = m_bulugh.process();
+		m_narrationCollector.process(currentNarrations, m_language, SunnahConstants.COLLECTION_BULUGH_MARAM);
+		m_bookCollector.process(currentNarrations, m_language, SunnahConstants.COLLECTION_BULUGH_MARAM);
+		m_gradeCollector.process(currentNarrations, m_language, SunnahConstants.COLLECTION_BULUGH_MARAM);
+		m_chapterCollector.process(currentNarrations, m_language, SunnahConstants.COLLECTION_BULUGH_MARAM);
 
 		System.out.println("Collections loaded in memory: "+(System.currentTimeMillis()-now)+" ms");
 

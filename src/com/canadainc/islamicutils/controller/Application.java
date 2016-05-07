@@ -2,6 +2,7 @@ package com.canadainc.islamicutils.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.canadainc.quran10.AyatDownloader;
 import com.canadainc.quran10.QuranArabicExtractor;
@@ -9,6 +10,8 @@ import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
 import com.canadainc.quran10.ibnkatheer.TafsirController;
+import com.canadainc.sunnah10.BulughMaramParser;
+import com.canadainc.sunnah10.Narration;
 import com.canadainc.sunnah10.SunnahAdminDatabase;
 import com.canadainc.sunnah10.SunnahPopulator;
 
@@ -51,18 +54,21 @@ public class Application
 		try {
 			Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
 
-			new File("res/sunnah10/sunnah_english.db").delete();
+			File english = new File("res/sunnah10/sunnah_english.db");
+			english.delete();
 			SunnahPopulator sp = new SunnahPopulator("english", "res/sunnah10");
 			sp.process();
 			sp.close();
 			
-			new File("res/sunnah10/sunnah_arabic.db").delete();
+			File arabic = new File("res/sunnah10/sunnah_arabic.db");
+			arabic.delete();
 			sp = new SunnahPopulator("arabic", "res/sunnah10");
 			sp.process();
 			sp.close();
 			
-			new File("res/sunnah10/sunnah10.db").delete();
-			SunnahAdminDatabase sad = new SunnahAdminDatabase("res/sunnah10/sunnah10.db", "res/sunnah10/sunnah_arabic.db", "res/sunnah10/sunnah_english.db");
+			File admin = new File("res/sunnah10/sunnah10.db");
+			admin.delete();
+			SunnahAdminDatabase sad = new SunnahAdminDatabase( admin.getPath(), arabic.getPath(), english.getPath() );
 			sad.process();
 			sad.close();
 		} catch (Exception e) {
@@ -96,8 +102,41 @@ public class Application
 
 	public static void main(String[] args)
 	{
+		//testBulugh();
 		testHadith();
 		//testPopulateArabicQuran();
 		//testDownloadAyatImages();
+	}
+
+
+	private static void testBulugh()
+	{
+		try
+		{
+			BulughMaramParser bmp = new BulughMaramParser();
+			List<Narration> narrations = bmp.readStaticBulugh( new File("res/sunnah10/static/english/bulugh") );
+			
+			//bmp.createDB(narrations);
+			List<Narration> narrations2 = bmp.readStaticBulughArabic( new File("res/sunnah10/static/arabic/bulugh/assets") );
+
+			System.out.println(narrations2.size()+"; "+narrations.size());
+/*
+			int k = Math.min(narrations.size(), narrations2.size());
+			StringBuffer sb = new StringBuffer();
+
+			for (int i = 0; i < k; i++) {
+				sb.append( narrations2.get(i).text+"\n"+narrations.get(i).text+"\n\n\n" );
+			}
+
+			Writer out = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream("res/result.txt"), "UTF-8"));
+			try {
+				out.write( sb.toString() );
+			} finally {
+				out.close();
+			} */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
