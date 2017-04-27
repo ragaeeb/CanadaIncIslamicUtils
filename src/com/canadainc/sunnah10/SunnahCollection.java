@@ -5,7 +5,7 @@ public class SunnahCollection
 	public int id;
 	public int author;
 	public String name;
-	public String description;
+
 	public SunnahCollection(int id, int author, String name) {
 		super();
 		this.id = id;
@@ -27,11 +27,6 @@ public class SunnahCollection
 		SunnahCollection other = (SunnahCollection) obj;
 		if (author != other.author)
 			return false;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
 		if (id != other.id)
 			return false;
 		if (name == null) {
@@ -43,7 +38,6 @@ public class SunnahCollection
 	}
 	@Override
 	public String toString() {
-		return "SunnahCollection [id=" + id + ", author=" + author + ", name=" + name
-				+ ", description=" + description + "]";
+		return "SunnahCollection [id=" + id + ", author=" + author + ", name=" + name +"]";
 	}
 }

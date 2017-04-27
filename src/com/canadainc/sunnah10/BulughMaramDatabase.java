@@ -68,10 +68,6 @@ public class BulughMaramDatabase
 				n.inBookNumber = 1;
 			}
 
-			if (!arabic) {
-				n.arabicId = n.id;
-			}
-
 			narrations.add(n);
 		}
 	}

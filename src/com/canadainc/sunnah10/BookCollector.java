@@ -95,7 +95,7 @@ public class BookCollector implements Collector
 			bookName = WordUtils.capitalizeFully(bookName);
 			bookName = bookName.replace("\n", " ").trim();
 
-			if ( bookName.equalsIgnoreCase("ok") && arabic && collection.equals("adab") )
+			if ( bookName.equalsIgnoreCase("ok") || bookName.equalsIgnoreCase("Blank") && arabic && collection.equals("adab") )
 			{
 				bookName = adabArabicBookNames.get(bookID);
 
@@ -103,7 +103,7 @@ public class BookCollector implements Collector
 					bookName = "كتاب";
 				}
 			}
-
+			
 			if (bookName == null || bookName.isEmpty()) {
 				System.out.println("WARNING! "+bookName+"; "+bookID+"; "+collection);
 			}

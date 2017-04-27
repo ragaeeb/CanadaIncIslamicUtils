@@ -1,7 +1,6 @@
 package com.canadainc.sunnah10;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,17 +46,25 @@ public class SunnahReader
 
 	public Narration parseNarration(JSONObject json)
 	{
-		// TODO: take a look at html of: 128330
-		
 		Narration n = new Narration();
-		n.arabicId = readInt(json, "matchingArabicURN");
 		n.chapter = new Chapter( (String)json.get("babName"), readInt(json, "babNumber") );
 		n.book = new Book( readInt(json, "bookID"), (String)json.get("bookName") );
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");
 		n.grading = (String)extractAvailable(new String[]{"grade1", "grade2"}, json);
-		n.id = Integer.parseInt( (String)extractAvailable(new String[]{"arabicURN", "englishURN"}, json) );
+		
+		if ( json.containsKey("arabicURN") ) {
+			n.id = Integer.parseInt( (String)json.get("arabicURN") );
+		} else if ( json.containsKey("matchingArabicURN") ) {
+			n.id = Integer.parseInt( (String)json.get("matchingArabicURN") );
+		} else {
+			System.err.println("UnmatchedTranslation: "+json.toJSONString());
+		}
+		
+		if (n.id == 0) {
+			System.err.println("UnsetID: "+json.toJSONString());
+		}
 
 		return n;
 	}

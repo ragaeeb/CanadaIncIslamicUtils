@@ -31,7 +31,6 @@ public class SunnahCollectionsTable implements SunnahPrimaryTable<String>
 		columns.add("id INTEGER PRIMARY KEY");
 		columns.add("author INTEGER NOT NULL");
 		columns.add("name TEXT NOT NULL");
-		columns.add("description TEXT");
 
 		DBUtils.createTable(m_connection, getTableName(), columns);
 

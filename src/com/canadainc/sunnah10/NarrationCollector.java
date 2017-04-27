@@ -14,7 +14,7 @@ public class NarrationCollector implements Collector
 
 	private Dictionary m_dictionary;
 	private Map<String, Collection<Narration>> m_narrations;
-
+	
 	public NarrationCollector()
 	{
 		m_narrations = new HashMap<String, Collection<Narration>>(8);
@@ -23,7 +23,7 @@ public class NarrationCollector implements Collector
 		english.put("bukhari", Arrays.asList(1988)); // Dr. M. Muhsin Khan
 		english.put("muslim", Arrays.asList(1989)); // Abdul Hamid Siddiqui
 		english.put("abudawud", Arrays.asList(1990)); // Ahmad Hasan
-		english.put("bulugh", Arrays.asList(SunnahConstants.BULUGH_MARAM_TRANSLATOR)); // Nancy Eweiss
+		english.put(SunnahConstants.COLLECTION_BULUGH_MARAM, Arrays.asList(SunnahConstants.BULUGH_MARAM_TRANSLATOR)); // Nancy Eweiss
 		english.put("malik", Arrays.asList(1991,1992)); // `A'isha `Abdarahman at-Tarjumana and Ya`qub Johnson
 
 		m_translations = new HashMap<String, Map<String, List<Integer>> >(1);
@@ -126,6 +126,24 @@ public class NarrationCollector implements Collector
 		{
 			result = result.substring( "Introduction ".length() );
 			n.hadithNumber = result;
+		}
+	}
+	
+	
+	public void swapHadithNumbersWith(String collection, Collection<Narration> theirs)
+	{
+		Map<Integer,Narration> idToNarration = new HashMap<>();
+		
+		for ( Narration n: m_narrations.get(collection) ) {
+			idToNarration.put(n.id, n);
+		}
+		
+		for (Narration n: theirs) {
+			System.out.println(n.id);
+			Narration ours = idToNarration.get(n.id);
+			String hadithNumber = ours.hadithNumber;
+			ours.hadithNumber = n.hadithNumber;
+			n.hadithNumber = hadithNumber;
 		}
 	}
 

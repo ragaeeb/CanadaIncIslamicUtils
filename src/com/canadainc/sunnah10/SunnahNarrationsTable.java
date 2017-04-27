@@ -46,11 +46,10 @@ public class SunnahNarrationsTable implements SunnahTable
 
 			for (Narration n: narrations)
 			{
-				if ( !m_arabic && n.arabicId == 0 ) {
-					// skip
-				} else {
+				if (n.id != 0)
+				{
 					int i = 0;
-					ps.setInt(++i, m_arabic ? n.id : n.arabicId); // use the arabic id so we can link at runtime
+					ps.setInt(++i, n.id);
 					ps.setInt(++i, m_collections.getIdFor(collection));
 					DBUtils.setNullInt(++i, n.book.id, ps);
 					DBUtils.setNullInt(++i, m_chapters.getIdFor(n.chapter), ps);

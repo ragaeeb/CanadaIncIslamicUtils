@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 
 public class SunnahAdminDatabase
 {
@@ -36,7 +35,7 @@ public class SunnahAdminDatabase
 		ps = m_connection.prepareStatement("CREATE TABLE narrations (id INTEGER PRIMARY KEY, collection_id INTEGER, hadith_num_ar TEXT, hadith_num_en TEXT, body TEXT)");
 		ps.execute();
 		
-		ps = m_connection.prepareStatement("INSERT INTO narrations SELECT a.id,a.collection_id,a.hadith_number,b.hadith_number,a.body FROM english.narrations a INNER JOIN arabic.narrations b ON a.id=b.id");
+		ps = m_connection.prepareStatement("INSERT INTO narrations SELECT e.id,e.collection_id,a.hadith_number,e.hadith_number,e.body FROM english.narrations e INNER JOIN arabic.narrations a ON e.id=a.id");
 		ps.execute();
 		
 		ps = m_connection.prepareStatement("CREATE INDEX IF NOT EXISTS narrations_index ON narrations(collection_id,hadith_num_ar,hadith_num_en)");

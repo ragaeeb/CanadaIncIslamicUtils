@@ -2,7 +2,6 @@ package com.canadainc.sunnah10;
 
 public class Narration implements Comparable<Narration>
 {
-	public int arabicId;
 	public Chapter chapter;
 	public Book book;
 	public String hadithNumber;
@@ -25,8 +24,6 @@ public class Narration implements Comparable<Narration>
 		if (getClass() != obj.getClass())
 			return false;
 		Narration other = (Narration) obj;
-		if (arabicId != other.arabicId)
-			return false;
 		if (chapter == null) {
 			if (other.chapter != null)
 				return false;
@@ -64,10 +61,9 @@ public class Narration implements Comparable<Narration>
 		this.book = new Book();
 	}
 
-	public Narration(int arabicId, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
-			int id, int inBookNumber, String text) {
+	public Narration(int id, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
+			int inBookNumber, String text) {
 		super();
-		this.arabicId = arabicId;
 		this.chapter = new Chapter(babName, babNumber);
 		this.book = new Book(bookId, bookName);
 		this.hadithNumber = hadithNumber;
@@ -76,16 +72,16 @@ public class Narration implements Comparable<Narration>
 		this.text = text;
 	}
 	
-	public Narration(int arabicId, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
-			int id, int inBookNumber, String text, int translator) {
-		this(arabicId, babName, babNumber, bookId, bookName, hadithNumber, id, inBookNumber, text);
+	public Narration(int id, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
+			int inBookNumber, String text, int translator) {
+		this(id, babName, babNumber, bookId, bookName, hadithNumber, inBookNumber, text);
 		this.translator = translator;
 	}
 
 	@Override
 	public String toString() {
-		return "Narration [arabicId=" + arabicId + ", chapter=" + chapter + ", book=" + book + ", hadithNumber="
-				+ hadithNumber + ", id=" + id + ", inBookNumber=" + inBookNumber + ", text=" + text + ", translator="
+		return "Narration [id=" + id + ", chapter=" + chapter + ", book=" + book + ", hadithNumber="
+				+ hadithNumber + ", inBookNumber=" + inBookNumber + ", text=" + text + ", translator="
 				+ translator + ", grading=" + grading + "]";
 	}
 
