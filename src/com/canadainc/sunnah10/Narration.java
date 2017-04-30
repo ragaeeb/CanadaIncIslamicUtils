@@ -4,6 +4,7 @@ public class Narration implements Comparable<Narration>
 {
 	public Chapter chapter;
 	public Book book;
+	public Book part;
 	public String hadithNumber;
 	public int id;
 	public int inBookNumber;
@@ -59,6 +60,7 @@ public class Narration implements Comparable<Narration>
 	public Narration() {
 		super();
 		this.book = new Book();
+		this.text = new String();
 	}
 
 	public Narration(int id, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
@@ -80,7 +82,7 @@ public class Narration implements Comparable<Narration>
 
 	@Override
 	public String toString() {
-		return "Narration [id=" + id + ", chapter=" + chapter + ", book=" + book + ", hadithNumber="
+		return "Narration [id=" + id + ", chapter=" + chapter + ", book=" + book + ", part=" + part + ", hadithNumber="
 				+ hadithNumber + ", inBookNumber=" + inBookNumber + ", text=" + text + ", translator="
 				+ translator + ", grading=" + grading + "]";
 	}

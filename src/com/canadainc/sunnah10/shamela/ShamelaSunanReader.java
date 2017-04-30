@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10;
+package com.canadainc.sunnah10.shamela;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,10 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.common.io.IOUtils;
+import com.canadainc.sunnah10.Book;
+import com.canadainc.sunnah10.Chapter;
+import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.Tahqeeq;
 
 public class ShamelaSunanReader
 {

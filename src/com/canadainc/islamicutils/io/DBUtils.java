@@ -12,8 +12,14 @@ import java.util.List;
 
 import org.jsoup.helper.StringUtil;
 
+import com.canadainc.sunnah10.Narration;
+
 public class DBUtils
 {
+	private static final String SUFFIX_NOT_NULL = " NOT NULL";
+	private static final String SUFFIX_PRIMARY_KEY = " PRIMARY KEY";
+
+
 	public static void createTable(Connection c, String table, Collection<String> columns) throws SQLException
 	{
 		PreparedStatement ps = c.prepareStatement("CREATE TABLE IF NOT EXISTS "+table+" ("+StringUtil.join(columns, ",")+")");
@@ -48,6 +54,44 @@ public class DBUtils
 		} else {
 			ps.setInt(i, value);
 		}
+	}
+	
+	
+	/**
+	 * Creates a list of columns for a table that cannot be NULL.
+	 * @param primary A primary key. If this is <code>null</code> then a primary key is not created.
+	 * @param columns All additional mandatory columns for the table.
+	 * @return
+	 */
+	public static List<String> createNotNullColumns(String primary, String... columns)
+	{
+		ArrayList<String> result = new ArrayList<String>();
+		
+		if (primary != null) {
+			result.add(primary+SUFFIX_PRIMARY_KEY);
+		}
+		
+		for (String column: columns) {
+			result.add(column+SUFFIX_NOT_NULL);
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Appends a list of columns to <code>result</code> that are allowed to be <code>null</code>.
+	 * @param result The list of columns to append the results to.
+	 * @param columns All additional optional columns.
+	 * @return A reference to <code>result</code>.
+	 */
+	public static List<String> createNullColumns(List<String> result, String... columns)
+	{
+		for (String column: columns) {
+			result.add(column);
+		}
+		
+		return result;
 	}
 
 
