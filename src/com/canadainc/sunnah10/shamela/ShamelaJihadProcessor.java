@@ -51,7 +51,7 @@ public class ShamelaJihadProcessor implements ShamelaProcessor
 					n.text += body;
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) ) {
-				n.text += ShamelaUtils.parseChildText(e);
+				n.text += ShamelaUtils.extractText(e);
 			} 
 		}
 		
@@ -65,5 +65,10 @@ public class ShamelaJihadProcessor implements ShamelaProcessor
 	 */
 	public List<Narration> getNarrations() {
 		return m_narrations;
+	}
+
+	@Override
+	public void preprocess(JSONObject json)
+	{
 	}
 }

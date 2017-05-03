@@ -11,6 +11,7 @@ public class Narration implements Comparable<Narration>
 	public String text;
 	public int translator;
 	public String grading;
+	public String commentary;
 
 	@Override
 	public int hashCode() {
@@ -61,6 +62,12 @@ public class Narration implements Comparable<Narration>
 		super();
 		this.book = new Book();
 		this.text = new String();
+	}
+	
+	public Narration(int id)
+	{
+		this();
+		this.id = id;
 	}
 
 	public Narration(int id, String babName, int babNumber, int bookId, String bookName, String hadithNumber,

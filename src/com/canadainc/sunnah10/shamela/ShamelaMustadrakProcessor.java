@@ -41,7 +41,7 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
-				if ( body.trim().matches("\\d+$") && ( i+1 < nodes.size() ) && ShamelaUtils.isTitleSpan( nodes.get(i+1) ) && ShamelaUtils.parseChildText( nodes.get(i+1) ).startsWith("[ص:") )
+				if ( body.trim().matches("\\d+$") && ( i+1 < nodes.size() ) && ShamelaUtils.isTitleSpan( nodes.get(i+1) ) && ShamelaUtils.extractText( nodes.get(i+1) ).startsWith("[ص:") )
 				{
 					addNarration(n);
 
@@ -52,7 +52,7 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 					n.text += body;
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				String signature = ShamelaUtils.parseChildText(e);
+				String signature = ShamelaUtils.extractText(e);
 
 				if ( signature.equals(GRADE_SIGNATURE) )
 				{
@@ -96,5 +96,10 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 	@Override
 	public List<Narration> getNarrations() {
 		return m_narrations;
+	}
+
+	@Override
+	public void preprocess(JSONObject json)
+	{
 	}
 }

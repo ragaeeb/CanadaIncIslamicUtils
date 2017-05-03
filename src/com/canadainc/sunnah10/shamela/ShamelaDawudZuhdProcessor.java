@@ -40,7 +40,7 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 					n.text += body;
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				n.text += ShamelaUtils.parseChildText(e);
+				n.text += ShamelaUtils.extractText(e);
 			}
 		}
 
@@ -52,5 +52,10 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 	@Override
 	public List<Narration> getNarrations() {
 		return m_narrations;
+	}
+
+	@Override
+	public void preprocess(JSONObject json)
+	{
 	}
 }

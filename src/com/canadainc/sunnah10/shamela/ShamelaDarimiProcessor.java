@@ -34,8 +34,13 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 					m_narrations.add(n);
 				}
 
-				n = new Narration();
-				n.id = ShamelaUtils.parseHadithNumber(e);
+				int current = ShamelaUtils.parseHadithNumber(e);
+				
+				if ( m_narrations.isEmpty() || ( m_narrations.get( m_narrations.size()-1 ).id <= current ) )
+				{
+					n = new Narration();
+					n.id = current;
+				}
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
@@ -43,7 +48,7 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 					n.text += body;
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				String signature = ShamelaUtils.parseChildText(e);
+				String signature = ShamelaUtils.extractText(e);
 
 				if ( signature.equals(GRADE_SIGNATURE) )
 				{
@@ -69,5 +74,10 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 	@Override
 	public List<Narration> getNarrations() {
 		return m_narrations;
+	}
+
+	@Override
+	public void preprocess(JSONObject json)
+	{
 	}
 }

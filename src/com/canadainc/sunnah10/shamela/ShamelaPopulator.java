@@ -44,7 +44,9 @@ public class ShamelaPopulator
 		for (File f: all)
 		{
 			JSONObject json = (JSONObject)JSONValue.parse( IOUtils.readFileUtf8(f) );
-			Document d = Jsoup.parse( (String)json.get("content") );
+			m_processor.preprocess(json);
+
+			Document d = Jsoup.parse( json.get("content").toString() );
 			
 			try {
 				m_processor.process( d.body().childNodes(), json );
