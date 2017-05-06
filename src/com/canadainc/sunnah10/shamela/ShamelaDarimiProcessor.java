@@ -19,6 +19,7 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 		m_narrations = new ArrayList<>();
 	}
 
+
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
@@ -28,19 +29,14 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 		{
 			Node e = nodes.get(i);
 			
-			if ( ShamelaUtils.isHadithNumberNode(e) )
+			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations) )
 			{
 				if (n != null) {
 					m_narrations.add(n);
 				}
 
-				int current = ShamelaUtils.parseHadithNumber(e);
-				
-				if ( m_narrations.isEmpty() || ( m_narrations.get( m_narrations.size()-1 ).id <= current ) )
-				{
-					n = new Narration();
-					n.id = current;
-				}
+				n = new Narration();
+				n.id = ShamelaUtils.parseHadithNumber(e);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
@@ -77,7 +73,14 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public void preprocess(JSONObject json)
+	public boolean preprocess(JSONObject json) {
+		return true;
+	}
+
+
+	@Override
+	public boolean hasGrade(int id)
 	{
+		return true;
 	}
 }

@@ -104,7 +104,7 @@ public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public void preprocess(JSONObject json)
+	public boolean preprocess(JSONObject json)
 	{
 		if ( Integer.parseInt( json.get("pid").toString() ) > 1652 )
 		{
@@ -119,5 +119,13 @@ public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
 		} else {
 			m_typos.process(json);
 		}
+		
+		return true;
+	}
+
+	@Override
+	public boolean hasGrade(int id)
+	{
+		return false;
 	}
 }

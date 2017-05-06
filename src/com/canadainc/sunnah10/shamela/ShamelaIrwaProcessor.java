@@ -122,7 +122,14 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public void preprocess(JSONObject json) {
+	public boolean preprocess(JSONObject json) {
 		m_typos.process(json);
+		return true;
+	}
+
+	@Override
+	public boolean hasGrade(int id)
+	{
+		return true;
 	}
 }

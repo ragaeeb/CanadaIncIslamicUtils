@@ -55,7 +55,13 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public void preprocess(JSONObject json)
+	public boolean preprocess(JSONObject json) {
+		return true;
+	}
+
+	@Override
+	public boolean hasGrade(int id)
 	{
+		return false;
 	}
 }

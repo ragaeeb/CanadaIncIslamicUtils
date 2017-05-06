@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -41,20 +42,73 @@ public class ShamelaPopulator
 			}
 		});
 		
+		int lastSize = 0;
+		
 		for (File f: all)
 		{
 			JSONObject json = (JSONObject)JSONValue.parse( IOUtils.readFileUtf8(f) );
-			m_processor.preprocess(json);
-
-			Document d = Jsoup.parse( json.get("content").toString() );
+			boolean process = m_processor.preprocess(json);
 			
-			try {
+			if (process)
+			{
+				Document d = Jsoup.parse( json.get("content").toString() );
+				
+				int pageNumber = Integer.parseInt( json.get("pid").toString() );
 				m_processor.process( d.body().childNodes(), json );
-				ShamelaUtils.assertSequential(m_processor.getNarrations(), true);
-			} catch (Exception ex) {
-				System.err.println( f.getName()+"; "+ex.getMessage() );
-				//throw ex;
+				
+				List<Narration> narrations = m_processor.getNarrations();
+				int newSize = narrations.size();
+				
+				for (int i = lastSize; i < newSize; i++) {
+					narrations.get(i).pageNumber = pageNumber;
+				}
+				
+				lastSize = newSize;
 			}
+		}
+	}
+	
+	
+	public void validateSequence()
+	{
+		int n = m_processor.getNarrations().size();
+		
+		for (int i = 0; i < n-1; i++)
+		{
+			Narration current = m_processor.getNarrations().get(i);
+			Narration next = m_processor.getNarrations().get(i+1);
+			
+			if (next.id-current.id != 1) {
+				System.err.println("Page "+current.pageNumber+"IdDiff(current,next): ("+current.id+"; "+next.id+")");
+			}
+		}
+	}
+	
+	
+	public void validateGrades()
+	{
+		HashMap<String, Integer> gradeToCount = new HashMap<>();
+		HashMap<String, Integer> gradeToPage = new HashMap<>();
+		
+		for (Narration n: m_processor.getNarrations())
+		{
+			if ( n.grading == null && m_processor.hasGrade(n.id) ) {
+				System.err.println("Page "+n.pageNumber+"; NoGrade(current): ("+n.id+")");
+			} else if (n.grading != null) {
+				String grading = n.grading.trim();
+				Integer count = gradeToCount.get(grading.trim());
+				
+				if (count == null) {
+					count = 0;
+				}
+
+				gradeToCount.put(grading, ++count);
+				gradeToPage.put(grading, n.pageNumber);
+			}
+		}
+		
+		for (String key: gradeToCount.keySet()) {
+			System.out.println(key+": "+gradeToCount.get(key)+"; page="+gradeToPage.get(key));
 		}
 	}
 	

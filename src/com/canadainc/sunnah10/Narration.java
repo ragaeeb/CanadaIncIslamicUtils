@@ -11,7 +11,8 @@ public class Narration implements Comparable<Narration>
 	public String text;
 	public int translator;
 	public String grading;
-	public String commentary;
+	public String commentary = new String();
+	public int pageNumber;
 
 	@Override
 	public int hashCode() {

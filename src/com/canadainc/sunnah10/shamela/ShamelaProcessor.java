@@ -22,8 +22,9 @@ public interface ShamelaProcessor
 	 * Optionally preprocesses the JSON which will be passed into the {@link #process(List, JSONObject)} method.
 	 * Useful if there are any known typos which should be fixed beforehand.
 	 * @param json
+	 * @return TODO
 	 */
-	public void preprocess(JSONObject json);
+	public boolean preprocess(JSONObject json);
 	
 	
 	/**
@@ -31,4 +32,12 @@ public interface ShamelaProcessor
 	 * @return All the narrations that were processed thus far.
 	 */
 	public List<Narration> getNarrations();
+	
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean hasGrade(int id);
 }
