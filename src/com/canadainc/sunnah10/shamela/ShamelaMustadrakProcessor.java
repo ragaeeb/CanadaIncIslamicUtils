@@ -13,13 +13,11 @@ import com.canadainc.sunnah10.Narration;
 public class ShamelaMustadrakProcessor implements ShamelaProcessor
 {
 	private static final String GRADE_SIGNATURE = "[التعليق - من تلخيص الذهبي]";
-	private ArrayList<Narration> m_narrations;
-	private HashMap<Integer,Integer> m_narrationToIndex;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
+	private HashMap<Integer,Integer> m_narrationToIndex = new HashMap<>();
 
 	public ShamelaMustadrakProcessor()
 	{
-		m_narrations = new ArrayList<>();
-		m_narrationToIndex = new HashMap<>();
 	}
 
 	@Override

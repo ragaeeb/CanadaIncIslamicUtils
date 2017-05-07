@@ -11,12 +11,11 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaIbaanahProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
 	private int m_counter;
 
 	public ShamelaIbaanahProcessor()
 	{
-		m_narrations = new ArrayList<>();
 		m_counter = 0;
 	}
 

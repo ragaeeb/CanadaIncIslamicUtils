@@ -11,12 +11,11 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaDarimiProcessor implements ShamelaProcessor
 {
-	private List<Narration> m_narrations;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
 	private static final String GRADE_SIGNATURE = "[تعليق المحقق]";
 
 	public ShamelaDarimiProcessor()
 	{
-		m_narrations = new ArrayList<>();
 	}
 
 

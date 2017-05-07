@@ -54,7 +54,14 @@ public class ShamelaPopulator
 				Document d = Jsoup.parse( json.get("content").toString() );
 				
 				int pageNumber = Integer.parseInt( json.get("pid").toString() );
-				m_processor.process( d.body().childNodes(), json );
+				
+				try {
+					m_processor.process( d.body().childNodes(), json );
+				} catch (Exception ex) {
+					System.err.println("ErrorOnPage: "+pageNumber);
+					ex.printStackTrace();
+					throw ex;
+				}
 				
 				List<Narration> narrations = m_processor.getNarrations();
 				int newSize = narrations.size();
@@ -79,7 +86,7 @@ public class ShamelaPopulator
 			Narration next = m_processor.getNarrations().get(i+1);
 			
 			if (next.id-current.id != 1) {
-				System.err.println("Page "+current.pageNumber+"IdDiff(current,next): ("+current.id+"; "+next.id+")");
+				System.err.println("Page "+current.pageNumber+"; IdDiff(current,next): ("+current.id+"; "+next.id+")");
 			}
 		}
 	}

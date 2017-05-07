@@ -1,5 +1,7 @@
 package com.canadainc.sunnah10.shamela;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jsoup.nodes.Node;
@@ -30,6 +32,35 @@ public class ShamelaUtils
 
 		return false;
 	}
+	
+	
+	public static final String[] sortLongestToShortest(String...input)
+	{
+		Arrays.sort(input, new Comparator<String>()
+		{
+			@Override
+			public int compare(String s1, String s2) {
+				return s1.length() < s2.length() ? 1 : -1;
+			}
+		});
+		
+		return input;
+	}
+	
+	
+	public static final Narration createNewNarration(Narration n, Node e, List<Narration> narrations)
+	{
+		if ( n != null && !n.text.isEmpty() ) { // 2 narrations in 1
+			narrations.add(n);
+		}
+		
+		n = new Narration();
+		n.id = parseHadithNumber(e);
+		n.text = "";
+		
+		return n;
+	}
+	
 
 
 	/**

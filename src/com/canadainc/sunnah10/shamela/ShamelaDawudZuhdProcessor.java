@@ -11,11 +11,10 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
 
 	public ShamelaDawudZuhdProcessor()
 	{
-		m_narrations = new ArrayList<>();
 	}
 
 	@Override

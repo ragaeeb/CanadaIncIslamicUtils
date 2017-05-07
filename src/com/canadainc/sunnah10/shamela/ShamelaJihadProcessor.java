@@ -11,11 +11,10 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaJihadProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
 
 	public ShamelaJihadProcessor()
 	{
-		m_narrations = new ArrayList<>();
 	}
 
 	public void process(List<Node> nodes, JSONObject json)

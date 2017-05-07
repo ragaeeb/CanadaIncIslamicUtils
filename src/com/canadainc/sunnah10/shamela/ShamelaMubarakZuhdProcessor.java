@@ -12,14 +12,11 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
-	private TypoProcessor m_typos;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
+	private TypoProcessor m_typos = new TypoProcessor();
 	
 	public ShamelaMubarakZuhdProcessor()
 	{
-		m_narrations = new ArrayList<>();
-		m_typos = new TypoProcessor();
-		
 		HashMap<Integer,Integer> idInsertion = new HashMap<>();
 		idInsertion.put(183, 177);
 		idInsertion.put(411, 391);

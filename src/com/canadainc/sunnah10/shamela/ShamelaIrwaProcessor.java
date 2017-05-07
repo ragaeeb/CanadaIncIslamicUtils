@@ -11,14 +11,11 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaIrwaProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
-	private TypoProcessor m_typos;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
+	private TypoProcessor m_typos = new TypoProcessor();
 
 	public ShamelaIrwaProcessor()
 	{
-		m_narrations = new ArrayList<>();
-		
-		m_typos = new TypoProcessor();
 		m_typos.add(1742,"1414) - ", "(1414) - ");
 		m_typos.add(1942,"(1566) - ", "(1621) - ");
 		m_typos.add(2316,"(2015) - ", "(2014) - ");
@@ -29,6 +26,8 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 		m_typos.add(2208,"قال عمر رضى الله عنه:", "(1913) - قال عمر رضى الله عنه:");
 		m_typos.add(248,"(338) - ", "(238) - ");
 		m_typos.add(406,"364) - ", "(364) - ");
+		m_typos.add(2664,"قلت: وهذا سند", "* ضعيف<br />قلت: وهذا سند");
+		m_typos.add(2577,"هو فى", "* معضل<br />هو فى");
 	}
 
 	@Override

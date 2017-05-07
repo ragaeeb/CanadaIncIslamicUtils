@@ -1,8 +1,6 @@
 package com.canadainc.sunnah10.shamela;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,11 +12,11 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations;
-	private TypoProcessor m_typos;
+	private ArrayList<Narration> m_narrations = new ArrayList<>();
+	private TypoProcessor m_typos = new TypoProcessor();
 	private static final int[] IGNORED_PAGES = new int[]{140,6829,6830,6831};
 	public static final int[] GRADELESS_AHADEETH = new int[]{123,1038,2859,3615,3622,3697,3763,4022,4301,4387,4492,4604,4793,5209,5406,5501,5797,5961,6204};
-	private static final String[] GRADES = new String[]{"لا يصح", "لا أعلم له أصلا", "كذب", "كذب لا أصل له", "شاذ لا يصح", "مدرج الشطر الآخر",
+	private static final String[] GRADES = ShamelaUtils.sortLongestToShortest("لا يصح", "لا أعلم له أصلا", "كذب", "كذب لا أصل له", "شاذ لا يصح", "مدرج الشطر الآخر",
 			"ليس بحديث", "منكر بذكر الملكين", "منكر جداً بزيادة: (وواحدة)", "موضوع بهذا التمام",
 			"ضعيف جدًا - أو موضوع بهذا السياق والتمام", "ضعيف جداً", "موضوع بهذا السياق", "ضعيف بهذا التمام",
 			"باطل بهذا اللفظ", "منكر بذكر الفقرة", "باطل مرفوعا", "منكر جداً", "ضعيف جدا", "منكر، ضعيف الإسناد",
@@ -26,23 +24,10 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 			"موقوف", "ضعف جدا", "موضع", "ضهعيف", "مُنْكَرٌ", "مُنْكَرٌ بِذِكْرِ مِصْرَ", "ضَعِيفٌ", "مَوْضُوعٌ",
 			"صعيف", "غريب", "لاأصل له مرفوعاً", "لاأصل بهذا اللفظ", "مقطوع ضعيف", "لا أعرفه مرفوعا", "َضعيف جداً",
 			"ضعيف جداً أو مو", "متروك", "قلت: وهو متروك", "قلت: وهذا موضوع", "قلت: وهذا إسناد ضعيف جداً أو موضوع"
-	};
-
-	static {
-		Arrays.sort(GRADES, new Comparator<String>()
-		{
-			@Override
-			public int compare(String s1, String s2) {
-				return s1.length() < s2.length() ? 1 : -1;
-			}
-		});
-	}
+	);
 
 	public ShamelaSilsilaDaifProcessor()
 	{
-		m_narrations = new ArrayList<>();
-		m_typos = new TypoProcessor();
-
 		m_typos.add(6426, "<span class=\"title\">4835/ م</span>", "<span class=\"red\">4835 - </span>");
 		m_typos.add(7130, "5179 (1) - ", "<span class=\"red\">5179 - </span>");
 		m_typos.add(10865, "6887 (**) - ", "<span class=\"red\">6887 - </span>");
@@ -88,12 +73,7 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 
 			if ( ShamelaUtils.isHadithNumberNode(e) && !ShamelaUtils.isHadithRangeNode(e) && isHadithNumberValid(e) )
 			{
-				if (n != null) {
-					m_narrations.add(n);
-				}
-
-				n = new Narration();
-				n.id = ShamelaUtils.parseHadithNumber(e);
+				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 
 				if (i+1 < nodeSize)
 				{
