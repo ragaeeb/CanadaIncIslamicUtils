@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.shamela.mubarak;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.shamela.ShamelaProcessor;
+import com.canadainc.sunnah10.shamela.ShamelaUtils;
 
 public class ShamelaJihadProcessor implements ShamelaProcessor
 {
@@ -25,9 +27,7 @@ public class ShamelaJihadProcessor implements ShamelaProcessor
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) )
 			{
-				if (n != null) { // 2 narrations in 1
-					m_narrations.add(n);
-				}
+				ShamelaUtils.appendIfValid(n, m_narrations);
 				
 				n = new Narration();
 				n.id = ShamelaUtils.parseHadithNumber(e);

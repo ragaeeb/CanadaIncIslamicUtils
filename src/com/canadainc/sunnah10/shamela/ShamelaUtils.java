@@ -11,7 +11,7 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaUtils
 {
-	private static final String HADITH_NUM_DELIMITER = "[-\\s]+";
+	public static final String HADITH_NUM_DELIMITER = "[-\\s]+";
 	private static final String HADITH_NUM_REGEX = "\\(\\d+\\)$";
 
 
@@ -32,8 +32,36 @@ public class ShamelaUtils
 
 		return false;
 	}
+
+	
+	public static boolean isArabicText(String text) {
+	    for (char charac : text.toCharArray()) {
+	        if (Character.UnicodeBlock.of(charac) == Character.UnicodeBlock.ARABIC) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 	
 	
+	public static final boolean isLineBreak(Node e) {
+		return e.nodeName().equals("br");
+	}
+	
+
+	public static final boolean isAllText(List<Node> nodes)
+	{
+		for (Node e: nodes)
+		{
+			if ( !isTextNode(e) && !isLineBreak(e) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
 	public static final String[] sortLongestToShortest(String...input)
 	{
 		Arrays.sort(input, new Comparator<String>()
@@ -43,24 +71,30 @@ public class ShamelaUtils
 				return s1.length() < s2.length() ? 1 : -1;
 			}
 		});
-		
+
 		return input;
 	}
-	
-	
+
+
 	public static final Narration createNewNarration(Narration n, Node e, List<Narration> narrations)
 	{
-		if ( n != null && !n.text.isEmpty() ) { // 2 narrations in 1
-			narrations.add(n);
-		}
-		
+		appendIfValid(n, narrations);
+
 		n = new Narration();
 		n.id = parseHadithNumber(e);
 		n.text = "";
-		
+
 		return n;
 	}
 	
+	
+	public static final void appendIfValid(Narration n, List<Narration> narrations)
+	{
+		if ( n != null && !n.text.isEmpty() && isArabicText(n.text) ) { // 2 narrations in 1
+			narrations.add(n);
+		}
+	}
+
 
 
 	/**
@@ -92,7 +126,7 @@ public class ShamelaUtils
 			TextNode tn = (TextNode)e.childNode(0);
 			String hadithNum = tn.text().split(HADITH_NUM_DELIMITER)[0].trim();
 			return hadithNum.matches(HADITH_NUM_REGEX);
-		} else if ( isTitleSpanNode(e, "title") && (e.childNodeSize() > 0) && isTitleSpan( e.childNode(0) ) ) {
+		} else if ( isClassSpanNode(e, "title") && (e.childNodeSize() > 0) && isTitleSpan( e.childNode(0) ) ) {
 			return isRoundHadithNumNode( e.childNode(0) );
 		}
 
@@ -108,13 +142,13 @@ public class ShamelaUtils
 	}
 
 
-	public static final boolean isTitleSpanNode(Node e, String attribute) {
+	public static final boolean isClassSpanNode(Node e, String attribute) {
 		return e.nodeName().equals("span") && e.attr("class").equals(attribute);
 	}
 
 
 	public static final boolean isTextSpanNode(Node e, String attribute) {
-		return isTitleSpanNode(e, attribute) && ( e.childNode(0) instanceof TextNode );
+		return isClassSpanNode(e, attribute) && ( e.childNode(0) instanceof TextNode );
 	}
 
 
@@ -142,16 +176,27 @@ public class ShamelaUtils
 	{
 		StringBuilder sb = new StringBuilder();
 		
+		if ( isTextNode(e) )
+		{
+			TextNode tn = (TextNode)e;
+			sb.append( tn.text() );
+		} else if ( isLineBreak(e) ) {
+			sb.append(" ");
+		}
+
 		for (int i = 0; i < e.childNodeSize(); i++)
 		{
 			Node n = e.childNode(i);
 
-			while (!(n instanceof TextNode)) {
-				n = e.childNode(0);
+			while ( !(n instanceof TextNode) && n.childNodeSize() > 0 ) {
+				n = n.childNode(0);
 			}
 
-			TextNode tn = (TextNode)n;
-			sb.append( tn.text() );
+			if (n instanceof TextNode)
+			{
+				TextNode tn = (TextNode)n;
+				sb.append( tn.text() );
+			}
 		}
 
 		return sb.toString();
@@ -163,8 +208,8 @@ public class ShamelaUtils
 		String hadithNum = getTextNode(e).text().split(HADITH_NUM_DELIMITER)[0].trim();
 		return Integer.parseInt(hadithNum);
 	}
-	
-	
+
+
 	public static final boolean isHadithNumberValid(Node e, List<Narration> narrations)
 	{
 		int current = ShamelaUtils.parseHadithNumber(e);
@@ -194,25 +239,5 @@ public class ShamelaUtils
 
 		TextNode tn = (TextNode)e;
 		return tn;
-	}
-
-
-	public static final void assertSequential(List<Narration> narrations, boolean id)
-	{
-		int n = narrations.size();
-
-		if (n > 1)
-		{
-			Narration secondLast = narrations.get(n-2);
-			Narration last = narrations.get(n-1);
-
-			if ( id && (last.id-secondLast.id != 1) ) {
-				throw new RuntimeException("IdDiff(secondLast, last): "+secondLast.id+", "+last.id);
-			} else if ( !id && (last.inBookNumber-secondLast.inBookNumber != 1) ) {
-				throw new RuntimeException("IdDiff(secondLast, last): "+secondLast.inBookNumber+", "+last.inBookNumber);
-			} else if (last.grading == null) {
-				throw new RuntimeException("NoGrade(last): "+last.id);
-			}
-		}
 	}
 }

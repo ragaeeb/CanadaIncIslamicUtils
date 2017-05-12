@@ -92,8 +92,7 @@ public class ShamelaAwaanahProcessor implements ShamelaProcessor
 
 		for (Node e: nodes)
 		{
-			if ( ShamelaUtils.isHadithNumberNode(e) )
-			{
+			if ( ShamelaUtils.isHadithNumberNode(e) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) && (n != null) ) {
 				String body = ((TextNode)e).text();
@@ -103,9 +102,7 @@ public class ShamelaAwaanahProcessor implements ShamelaProcessor
 			} 
 		}
 		
-		if (n != null) {
-			m_narrations.add(n);
-		}
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 	@Override

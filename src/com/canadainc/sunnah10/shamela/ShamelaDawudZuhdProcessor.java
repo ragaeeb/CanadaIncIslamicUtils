@@ -24,14 +24,8 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 
 		for (Node e: nodes)
 		{
-			if ( ShamelaUtils.isHadithNumberNode(e) )
-			{
-				if (n != null) {
-					m_narrations.add(n);
-				}
-
-				n = new Narration();
-				n.id = ShamelaUtils.parseHadithNumber(e);
+			if ( ShamelaUtils.isHadithNumberNode(e) ) {
+				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
@@ -43,9 +37,7 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 			}
 		}
 
-		if (n != null) {
-			m_narrations.add(n);
-		}
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 	@Override

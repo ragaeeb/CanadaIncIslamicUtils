@@ -12,6 +12,7 @@ import com.canadainc.sunnah10.Narration;
 public class ShamelaIbaanahProcessor implements ShamelaProcessor
 {
 	private ArrayList<Narration> m_narrations = new ArrayList<>();
+	private TypoProcessor m_typos = new TypoProcessor();
 	private int m_counter;
 
 	public ShamelaIbaanahProcessor()
@@ -28,9 +29,7 @@ public class ShamelaIbaanahProcessor implements ShamelaProcessor
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) )
 			{
-				if (n != null) {
-					m_narrations.add(n);
-				}
+				ShamelaUtils.appendIfValid(n, m_narrations);
 
 				n = new Narration();
 				n.id = ++m_counter;
@@ -46,9 +45,7 @@ public class ShamelaIbaanahProcessor implements ShamelaProcessor
 			}
 		}
 		
-		if (n != null) {
-			m_narrations.add(n);
-		}
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 	@Override

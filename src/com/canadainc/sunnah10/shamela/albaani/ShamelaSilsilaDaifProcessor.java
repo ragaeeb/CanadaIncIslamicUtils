@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.shamela.albaani;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,9 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.shamela.ShamelaProcessor;
+import com.canadainc.sunnah10.shamela.ShamelaUtils;
+import com.canadainc.sunnah10.shamela.TypoProcessor;
 
 public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 {
@@ -112,9 +115,7 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 			}
 		}
 
-		if (n != null) {
-			m_narrations.add(n);
-		}
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 

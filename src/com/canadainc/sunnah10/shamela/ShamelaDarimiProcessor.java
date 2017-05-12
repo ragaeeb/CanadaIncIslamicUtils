@@ -28,14 +28,8 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 		{
 			Node e = nodes.get(i);
 			
-			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations) )
-			{
-				if (n != null) {
-					m_narrations.add(n);
-				}
-
-				n = new Narration();
-				n.id = ShamelaUtils.parseHadithNumber(e);
+			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations) ) {
+				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
@@ -61,9 +55,7 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 			}
 		}
 		
-		if (n != null) {
-			m_narrations.add(n);
-		}
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 	@Override

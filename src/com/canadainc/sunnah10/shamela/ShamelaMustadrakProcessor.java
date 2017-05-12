@@ -86,7 +86,7 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 		if ( n != null && !m_narrationToIndex.containsKey(n.id) )
 		{
 			m_narrationToIndex.put(n.id, m_narrations.size());
-			m_narrations.add(n);
+			ShamelaUtils.appendIfValid(n, m_narrations);
 		}
 	}
 	
