@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -9,14 +8,8 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
+public class ShamelaDawudZuhdProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-
-	public ShamelaDawudZuhdProcessor()
-	{
-	}
-
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
@@ -38,21 +31,5 @@ public class ShamelaDawudZuhdProcessor implements ShamelaProcessor
 		}
 
 		ShamelaUtils.appendIfValid(n, m_narrations);
-	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean preprocess(JSONObject json) {
-		return true;
-	}
-
-	@Override
-	public boolean hasGrade(int id)
-	{
-		return false;
 	}
 }

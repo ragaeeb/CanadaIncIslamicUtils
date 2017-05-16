@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela.mubarak;
+package com.canadainc.sunnah10.processors.shamela.mubarak;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,15 +8,12 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.shamela.ShamelaProcessor;
-import com.canadainc.sunnah10.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.shamela.TypoProcessor;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
+import com.canadainc.sunnah10.processors.shamela.TypoProcessor;
 
-public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
+public class ShamelaMubarakZuhdProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
-
 	public ShamelaMubarakZuhdProcessor()
 	{
 		HashMap<Integer,Integer> idInsertion = new HashMap<>();
@@ -63,7 +59,7 @@ public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
 		for (Node e: nodes)
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) ) {
-				ShamelaUtils.createNewNarration(n, e, m_narrations);
+				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 
@@ -90,33 +86,15 @@ public class ShamelaMubarakZuhdProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean preprocess(JSONObject json)
+	public String preprocess(int page, String content)
 	{
-		if ( Integer.parseInt( json.get("pid").toString() ) > 1652 )
+		if (page > 1652 && !content.startsWith("<span"))
 		{
-			String content = json.get("content").toString();
-
-			if ( !content.startsWith("<span") ) // chapter names
-			{
-				int id = m_narrations.get( m_narrations.size()-1 ).id+1;
-				content = "<span class=\"red\">"+id+" - </span>"+content;
-				json.replace("content", content);
-			}
-		} else {
-			m_typos.process(json);
+			int id = m_narrations.get( m_narrations.size()-1 ).id+1;
+			content = TypoProcessor.decorateContent( String.valueOf(id) )+content;
+			return content;
 		}
 
-		return true;
-	}
-
-	@Override
-	public boolean hasGrade(int id)
-	{
-		return false;
+		return super.preprocess(page, content);
 	}
 }

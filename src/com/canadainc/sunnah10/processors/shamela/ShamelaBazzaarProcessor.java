@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -9,10 +8,10 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaBazzaarProcessor implements ShamelaProcessor
+public class ShamelaBazzaarProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
+	private static final String COUPLET_PATTERN = "^\\d+ و\\d+.*$";
+	private static final String SUB_PATTERN = "\\d+/\\d{1}$";
 
 	public ShamelaBazzaarProcessor()
 	{
@@ -94,13 +93,30 @@ public class ShamelaBazzaarProcessor implements ShamelaProcessor
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
-				
+
 				if ( correctId && !m_narrations.isEmpty() ) {
 					n.hadithNumber = String.valueOf(n.id);
 					n.id = m_narrations.get( m_narrations.size()-1 ).id+1;
 				}
+			} else if ( e.toString().trim().matches(COUPLET_PATTERN) ) {
+				String body = ((TextNode)e).text();
+				int id = Integer.parseInt( body.split(" ")[0] );
+				String hadithNum = body.split("-")[0];
+				
+				ShamelaUtils.appendIfValid(n, m_narrations);
+				n = new Narration(id);
+				n.hadithNumber = hadithNum.trim();
+				n.text = body.split("-")[1].trim();
+			} else if ( ShamelaUtils.isRedRegexNode(e, SUB_PATTERN) ) {
+				String body = ShamelaUtils.extractText(e);
+				int id = Integer.parseInt( body.split("/")[0] );
+				String hadithNum = body.split("-")[0];
+				
+				ShamelaUtils.appendIfValid(n, m_narrations);
+				n = new Narration(id);
+				n.hadithNumber = hadithNum.trim();
 			} else if ( ShamelaUtils.isTextNode(e) ) {
-				String body = ((TextNode)e).text();;
+				String body = ((TextNode)e).text();
 
 				if (n != null) {
 					n.text += body;
@@ -114,29 +130,12 @@ public class ShamelaBazzaarProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public boolean preprocess(JSONObject json)
+	public String preprocess(int page, String content)
 	{
-		int page = Integer.parseInt( json.get("pid").toString() );
-
-		if (page == 5890)
-		{
-			String content = json.get("content").toString();
-			json.put("content", content.substring(0, content.indexOf("(1)")));
-		} else {
-			m_typos.process(json);
+		if (page == 5890) {
+			return content.substring(0, content.indexOf("(1)") );
 		}
 
-		return true;
-	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean hasGrade(int id)
-	{
-		return false;
+		return super.preprocess(page, content);
 	}
 }

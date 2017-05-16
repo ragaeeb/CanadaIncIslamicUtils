@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela.albaani;
+package com.canadainc.sunnah10.processors.shamela.albaani;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -10,15 +9,12 @@ import com.canadainc.common.text.TextUtils;
 import com.canadainc.sunnah10.Book;
 import com.canadainc.sunnah10.Chapter;
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.shamela.ShamelaProcessor;
-import com.canadainc.sunnah10.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.shamela.TypoProcessor;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
-public class ShamelaTargheebProcessor implements ShamelaProcessor
+public class ShamelaTargheebProcessor extends AbstractShamelaProcessor
 {
 	private static final String BOOK_PREFIX = "كتاب";
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
 	private Book m_book;
 	private Chapter m_chapter;
 
@@ -34,9 +30,8 @@ public class ShamelaTargheebProcessor implements ShamelaProcessor
 	public void process(List<Node> nodes, JSONObject json)
 	{
 		Narration n = null;
-		int nodeSize = nodes.size();
 
-		for (int i = 0; i < nodeSize; i++)
+		for (int i = 0; i < nodes.size(); i++)
 		{
 			Node e = nodes.get(i);
 
@@ -66,14 +61,14 @@ public class ShamelaTargheebProcessor implements ShamelaProcessor
 
 				if ( ShamelaUtils.isTitleSpan(next) && isHeading ) { // chapter
 					++i;
-				} else if ( ShamelaUtils.isTextNode(next) && !isHeading && isHadithNumberValid(number) ) {					
+				} else if ( ShamelaUtils.isTextNode(next) && !isHeading && ShamelaUtils.isHadithNumberValid(e, m_narrations, n) ) {					
 					n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 
 					n.inBookNumber = Integer.parseInt( TextUtils.extractInside(content, "(", ")") );
 					n.book = m_book;
 					n.chapter = m_chapter;
 					n.text = content.substring( content.indexOf("]")+2 ); // to account for the space after
-					
+
 					if ( content.contains("[") && content.contains("]") ) {
 						n.grading = TextUtils.extractInside(content, "[", "]");
 					}
@@ -100,19 +95,13 @@ public class ShamelaTargheebProcessor implements ShamelaProcessor
 			m_narrations.get( m_narrations.size()-1 ).text += commentary;
 		}
 	}
-	
-	
-	private boolean isHadithNumberValid(int current) {
-		return m_narrations.isEmpty() || ( m_narrations.get( m_narrations.size()-1 ).id <= current );
-	}
-	
+
 
 	private boolean processHeading(int i, String content, int number)
 	{
 		if ( content.startsWith("(الترغيب في") || content.startsWith("الترغيب في") || content.startsWith("فصل في") || content.startsWith("الترهيب من") || content.startsWith("(الترهيب من") )
 		{
 			content = content.replaceAll("[\\.\\(\\)]+", "").trim();
-
 			m_chapter = new Chapter(content, number);
 			return true;
 		} else if ( content.startsWith(BOOK_PREFIX) ) {
@@ -125,17 +114,6 @@ public class ShamelaTargheebProcessor implements ShamelaProcessor
 		return false;
 	}
 
-
-	@Override
-	public boolean preprocess(JSONObject json) {
-		m_typos.process(json);
-		return true;
-	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
 
 	@Override
 	public boolean hasGrade(int id) {

@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.Iterator;
 import java.util.LinkedList;

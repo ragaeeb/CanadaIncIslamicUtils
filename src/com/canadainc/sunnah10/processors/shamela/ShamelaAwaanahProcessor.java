@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -9,11 +8,8 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaAwaanahProcessor implements ShamelaProcessor
+public class ShamelaAwaanahProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
-
 	public ShamelaAwaanahProcessor()
 	{
 		m_typos.prependHadithNumber(10,10);
@@ -83,6 +79,8 @@ public class ShamelaAwaanahProcessor implements ShamelaProcessor
 		m_typos.prependHadithNumber(7331,7888);
 		m_typos.prependHadithNumber(7577,8169);
 		m_typos.prependHadithNumber(7921,8543);
+
+		m_typos.add(2775, "2963 -<br /><br />", "");
 	}
 
 	@Override
@@ -94,31 +92,24 @@ public class ShamelaAwaanahProcessor implements ShamelaProcessor
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
-			} else if ( ShamelaUtils.isTextNode(e) && (n != null) ) {
+			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
-				n.text += body;
-			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				n.text += ShamelaUtils.extractText(e);
+				appendBody(n, body);
+			} else if ( ShamelaUtils.isTitleSpan(e) ) {
+				appendBody(n, ShamelaUtils.extractText(e));
 			} 
 		}
-		
+
 		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
-	@Override
-	public boolean preprocess(JSONObject json)
+
+	private void appendBody(Narration n, String body)
 	{
-		m_typos.process(json);
-		return true;
-	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean hasGrade(int id) {
-		return false;
+		if (n != null) {
+			n.text += body;
+		} else if ( !m_narrations.isEmpty() ) {
+			m_narrations.get( m_narrations.size()-1 ).text += body;
+		}
 	}
 }

@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela.albaani;
+package com.canadainc.sunnah10.processors.shamela.albaani;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -8,15 +7,11 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.shamela.ShamelaProcessor;
-import com.canadainc.sunnah10.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.shamela.TypoProcessor;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
-public class ShamelaIrwaProcessor implements ShamelaProcessor
+public class ShamelaIrwaProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
-
 	public ShamelaIrwaProcessor()
 	{
 		m_typos.add(1742,"1414) - ", "(1414) - ");
@@ -45,7 +40,7 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 			if ( e.toString().startsWith("باب") && nodeIndex == 0 ) { // skip chapter headings
 				continue;
 			}
-			
+
 			if ( ShamelaUtils.isRoundHadithNumNode(e) || ( ShamelaUtils.isTextNode(e) && ShamelaUtils.isRoundHadithNumText(e) && ( isNextAfterPrev(e) || isNextAfter(e,n) ) ) )
 			{
 				if (n != null) {
@@ -55,7 +50,7 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 				n = new Narration();
 				n.id = ShamelaUtils.parseRoundHadithNumber(e);
 				n.text = ShamelaUtils.extractRoundHadith(e);
-				
+
 				int starIndex = n.text.lastIndexOf("*");
 				int endIndex = n.text.length();
 				if ( (starIndex != -1) && starIndex > endIndex-10 ) { // near the end
@@ -93,14 +88,12 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 		}
 	}
 
-	private boolean isNextAfterPrev(Node e)
-	{
+	private boolean isNextAfterPrev(Node e) {
 		return !m_narrations.isEmpty() && ( m_narrations.get( m_narrations.size()-1 ).id == ShamelaUtils.parseRoundHadithNumber(e)-1 );
 	}
-	
-	
-	private boolean isNextAfter(Node e, Narration n)
-	{
+
+
+	private boolean isNextAfter(Node e, Narration n) {
 		return (n != null) && (n.id == ShamelaUtils.parseRoundHadithNumber(e)-1);
 	}
 
@@ -117,19 +110,7 @@ public class ShamelaIrwaProcessor implements ShamelaProcessor
 	}
 
 	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean preprocess(JSONObject json) {
-		m_typos.process(json);
-		return true;
-	}
-
-	@Override
-	public boolean hasGrade(int id)
-	{
+	public boolean hasGrade(int id) {
 		return true;
 	}
 }

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import com.canadainc.islamicutils.io.ShamelaReader;
-import com.canadainc.sunnah10.shamela.ShamelaSunanReader;
+import com.canadainc.sunnah10.processors.shamela.ShamelaSunanReader;
 
 public class SunnahPopulator
 {

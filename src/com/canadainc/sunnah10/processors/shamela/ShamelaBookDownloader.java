@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

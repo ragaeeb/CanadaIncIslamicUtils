@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela.albaani;
+package com.canadainc.sunnah10.processors.shamela.albaani;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -9,14 +8,11 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.shamela.ShamelaProcessor;
-import com.canadainc.sunnah10.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.shamela.TypoProcessor;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
-public class ShamelaJaamiProcessor implements ShamelaProcessor
+public class ShamelaJaamiProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
 	private static final String[] GRADES = ShamelaUtils.sortLongestToShortest("صحيح", "حسن", "ضعيف", "أقرب للضعف", "الصحيح");
 	private static final int[] IGNORED_PAGES = new int[]{608};
 
@@ -125,22 +121,13 @@ public class ShamelaJaamiProcessor implements ShamelaProcessor
 
 
 	@Override
-	public boolean preprocess(JSONObject json)
+	public String preprocess(int page, String content)
 	{
-		int page = Integer.parseInt( json.get("pid").toString() );
-
 		if ( ArrayUtils.indexOf(IGNORED_PAGES, page) != -1 ) {
-			return false;
-		} else {
-			m_typos.process(json);
+			return null;
 		}
 
-		return true;
-	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
+		return super.preprocess(page, content);
 	}
 
 	@Override

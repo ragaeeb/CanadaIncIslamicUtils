@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,15 +9,10 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaMustadrakProcessor implements ShamelaProcessor
+public class ShamelaMustadrakProcessor extends AbstractShamelaProcessor
 {
 	private static final String GRADE_SIGNATURE = "[التعليق - من تلخيص الذهبي]";
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
 	private HashMap<Integer,Integer> m_narrationToIndex = new HashMap<>();
-
-	public ShamelaMustadrakProcessor()
-	{
-	}
 
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
@@ -55,17 +49,17 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 				if ( signature.equals(GRADE_SIGNATURE) )
 				{
 					i += 2;
-					
+
 					if ( i < nodes.size() )
 					{
 						e = nodes.get(i);
 						int gradingHadithNumber = ShamelaUtils.parseHadithNumber(e);
-						
+
 						if ( m_narrationToIndex.containsKey(gradingHadithNumber) )
 						{
 							++i;
 							e = nodes.get(i);
-							
+
 							if ( ShamelaUtils.isTextNode(e) )
 							{
 								Narration matching = m_narrations.get( m_narrationToIndex.get(gradingHadithNumber) );
@@ -79,32 +73,20 @@ public class ShamelaMustadrakProcessor implements ShamelaProcessor
 			}
 		}
 	}
-	
-	
+
+
 	private void addNarration(Narration n)
 	{
 		if ( n != null && !m_narrationToIndex.containsKey(n.id) )
 		{
 			m_narrationToIndex.put(n.id, m_narrations.size());
-			ShamelaUtils.appendIfValid(n, m_narrations);
+			m_narrations.add(n);
 		}
 	}
-	
+
 
 	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
-	@Override
-	public boolean preprocess(JSONObject json)
-	{
-		return true;
-	}
-
-	@Override
-	public boolean hasGrade(int id)
-	{
+	public boolean hasGrade(int id) {
 		return true;
 	}
 }

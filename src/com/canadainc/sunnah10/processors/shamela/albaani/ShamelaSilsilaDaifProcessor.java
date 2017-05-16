@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela.albaani;
+package com.canadainc.sunnah10.processors.shamela.albaani;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -9,14 +8,11 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.shamela.ShamelaProcessor;
-import com.canadainc.sunnah10.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.shamela.TypoProcessor;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
-public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
+public class ShamelaSilsilaDaifProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
-	private TypoProcessor m_typos = new TypoProcessor();
 	private static final int[] IGNORED_PAGES = new int[]{140,6829,6830,6831};
 	public static final int[] GRADELESS_AHADEETH = new int[]{123,1038,2859,3615,3622,3697,3763,4022,4301,4387,4492,4604,4793,5209,5406,5501,5797,5961,6204};
 	private static final String[] GRADES = ShamelaUtils.sortLongestToShortest("لا يصح", "لا أعلم له أصلا", "كذب", "كذب لا أصل له", "شاذ لا يصح", "مدرج الشطر الآخر",
@@ -27,7 +23,7 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 			"موقوف", "ضعف جدا", "موضع", "ضهعيف", "مُنْكَرٌ", "مُنْكَرٌ بِذِكْرِ مِصْرَ", "ضَعِيفٌ", "مَوْضُوعٌ",
 			"صعيف", "غريب", "لاأصل له مرفوعاً", "لاأصل بهذا اللفظ", "مقطوع ضعيف", "لا أعرفه مرفوعا", "َضعيف جداً",
 			"ضعيف جداً أو مو", "متروك", "قلت: وهو متروك", "قلت: وهذا موضوع", "قلت: وهذا إسناد ضعيف جداً أو موضوع"
-	);
+			);
 
 	public ShamelaSilsilaDaifProcessor()
 	{
@@ -57,13 +53,6 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 	}
 
 
-	private boolean isHadithNumberValid(Node e)
-	{
-		int current = ShamelaUtils.parseHadithNumber(e);
-		return m_narrations.isEmpty() || ( m_narrations.get( m_narrations.size()-1 ).id <= current );
-	}
-
-
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
@@ -74,7 +63,7 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 		{
 			Node e = nodes.get(i);
 
-			if ( ShamelaUtils.isHadithNumberNode(e) && !ShamelaUtils.isHadithRangeNode(e) && isHadithNumberValid(e) )
+			if ( ShamelaUtils.isHadithNumberNode(e) && !ShamelaUtils.isHadithRangeNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations, n) )
 			{
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 
@@ -159,24 +148,14 @@ public class ShamelaSilsilaDaifProcessor implements ShamelaProcessor
 
 
 	@Override
-	public boolean preprocess(JSONObject json)
+	public String preprocess(int page, String content)
 	{
-		int page = Integer.parseInt( json.get("pid").toString() );
-
 		if ( ArrayUtils.indexOf(IGNORED_PAGES, page) != -1 ) {
-			return false;
-		} else {
-			m_typos.process(json);
+			return null;
 		}
 
-		return true;
+		return super.preprocess(page, content);
 	}
-
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
-
 
 	@Override
 	public boolean hasGrade(int id) {

@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -20,14 +20,23 @@ public class ShamelaUtils
 	 * @param e
 	 * @return
 	 */
-	public static final boolean isHadithNumberNode(Node e)
+	public static final boolean isHadithNumberNode(Node e) {
+		return isRedRegexNode(e, "\\d+$");
+	}
+	
+	
+	/**
+	 * Returns if this node is hadith number
+	 * @param e
+	 * @return
+	 */
+	public static final boolean isRedRegexNode(Node e, String regex)
 	{
 		if ( isTextSpanNode(e, "red") )
 		{
 			TextNode tn = (TextNode)e.childNode(0);
 			String hadithNum = tn.text().split("-")[0].trim();
-
-			return hadithNum.matches("\\d+$");
+			return hadithNum.matches(regex);
 		}
 
 		return false;
@@ -210,9 +219,14 @@ public class ShamelaUtils
 	}
 
 
-	public static final boolean isHadithNumberValid(Node e, List<Narration> narrations)
+	public static final boolean isHadithNumberValid(Node e, List<Narration> narrations, Narration n)
 	{
 		int current = ShamelaUtils.parseHadithNumber(e);
+		
+		if (n != null) {
+			return n.id <= current;
+		}
+		
 		return narrations.isEmpty() || ( narrations.get( narrations.size()-1 ).id <= current );
 	}
 

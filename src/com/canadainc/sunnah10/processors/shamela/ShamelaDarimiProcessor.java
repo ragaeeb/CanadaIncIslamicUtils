@@ -1,6 +1,5 @@
-package com.canadainc.sunnah10.shamela;
+package com.canadainc.sunnah10.processors.shamela;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -9,14 +8,9 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaDarimiProcessor implements ShamelaProcessor
+public class ShamelaDarimiProcessor extends AbstractShamelaProcessor
 {
-	private ArrayList<Narration> m_narrations = new ArrayList<>();
 	private static final String GRADE_SIGNATURE = "[تعليق المحقق]";
-
-	public ShamelaDarimiProcessor()
-	{
-	}
 
 
 	@Override
@@ -27,8 +21,8 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 		for (int i = 0; i < nodes.size(); i++)
 		{
 			Node e = nodes.get(i);
-			
-			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations) ) {
+
+			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations, n) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
@@ -42,11 +36,11 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 				if ( signature.equals(GRADE_SIGNATURE) )
 				{
 					++i;
-					
+
 					if ( i < nodes.size() )
 					{
 						e = nodes.get(i);
-						
+
 						if ( ShamelaUtils.isTextNode(e) ) {
 							n.grading = ((TextNode)e).text().trim();
 						}
@@ -54,24 +48,13 @@ public class ShamelaDarimiProcessor implements ShamelaProcessor
 				}
 			}
 		}
-		
+
 		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
-	@Override
-	public List<Narration> getNarrations() {
-		return m_narrations;
-	}
 
 	@Override
-	public boolean preprocess(JSONObject json) {
-		return true;
-	}
-
-
-	@Override
-	public boolean hasGrade(int id)
-	{
+	public boolean hasGrade(int id) {
 		return true;
 	}
 }
