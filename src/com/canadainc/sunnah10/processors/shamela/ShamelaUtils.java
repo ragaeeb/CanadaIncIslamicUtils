@@ -85,12 +85,17 @@ public class ShamelaUtils
 	}
 
 
-	public static final Narration createNewNarration(Narration n, Node e, List<Narration> narrations)
+	public static final Narration createNewNarration(Narration n, Node e, List<Narration> narrations) {
+		return createNewNarration(n, parseHadithNumber(e), narrations);
+	}
+	
+	
+	public static final Narration createNewNarration(Narration n, int hadithNumber, List<Narration> narrations)
 	{
 		appendIfValid(n, narrations);
 
 		n = new Narration();
-		n.id = parseHadithNumber(e);
+		n.id = hadithNumber;
 		n.text = "";
 
 		return n;
@@ -242,6 +247,43 @@ public class ShamelaUtils
 	{
 		String body = getTextNode(e).text().trim();
 		return body.substring( body.indexOf("-")+1 ).trim();
+	}
+	
+	
+	public static final void addIfSignatureMatches(List<Node> nodes, String collectionTitle, List<Narration> narrations)
+	{
+		for (Node e: nodes)
+		{
+			if ( ShamelaUtils.isTextNode(e) )
+			{
+				String body = ((TextNode)e).text();
+
+				if ( body.trim().equals(collectionTitle) )
+				{
+					e = e.nextSibling().nextSibling();
+					
+					if ( ShamelaUtils.isTextNode(e) )
+					{
+						body = ((TextNode)e).text().trim();
+
+						int index = body.indexOf(" ");
+						String hadithNum = body.substring(0, index);
+						Narration n = new Narration( Integer.parseInt(hadithNum) );
+						n.text = body.substring(index+1).trim();
+
+						try {
+							e = e.nextSibling().nextSibling().nextSibling().nextSibling().nextSibling();
+							
+							if (e != null) {
+								n.grading = ((TextNode)e).text().trim();
+							}
+						} catch (NullPointerException ex) {}
+
+						ShamelaUtils.appendIfValid(n, narrations);
+					}
+				}
+			} 
+		}
 	}
 
 

@@ -61,8 +61,8 @@ public class SunnahDotComProcessor implements Processor
 	{
 		Narration n = new Narration();
 		n.id = Integer.parseInt( extractAvailable(PRIMARY_KEYS, json) );
-		n.chapter = new Chapter( (String)json.get("babName"), readInt(json, "babNumber") );
-		n.book = new Book( readInt(json, "bookID"), (String)json.get("bookName") );
+		n.chapter = new Chapter( ((String)json.get("babName")).trim(), readInt(json, "babNumber") );
+		n.book = new Book( readInt(json, "bookID"), ((String)json.get("bookName")).trim() );
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");

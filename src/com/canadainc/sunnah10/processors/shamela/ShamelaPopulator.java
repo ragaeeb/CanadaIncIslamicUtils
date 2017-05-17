@@ -47,9 +47,11 @@ public class ShamelaPopulator
 		for (File f: all)
 		{
 			Object obj = JSONValue.parse( IOUtils.readFileUtf8(f) );
-			JSONArray arr = (JSONArray)obj;
+			JSONArray arr = new JSONArray();
 
-			if (arr == null) {
+			if (obj instanceof JSONArray) {
+				arr = (JSONArray)obj;
+			} else {
 				arr.add(obj);
 			}
 
