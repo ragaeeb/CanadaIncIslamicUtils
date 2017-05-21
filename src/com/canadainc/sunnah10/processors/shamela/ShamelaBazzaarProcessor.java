@@ -7,6 +7,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.processors.TypoProcessor;
 
 public class ShamelaBazzaarProcessor extends AbstractShamelaProcessor
 {

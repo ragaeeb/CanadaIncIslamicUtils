@@ -8,9 +8,9 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.processors.TypoProcessor;
 import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
-import com.canadainc.sunnah10.processors.shamela.TypoProcessor;
 
 public class ShamelaMubarakZuhdProcessor extends AbstractShamelaProcessor
 {

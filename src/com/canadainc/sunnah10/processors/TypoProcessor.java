@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.processors.shamela;
+package com.canadainc.sunnah10.processors;
 
 import java.util.ArrayList;
 import java.util.Collection;

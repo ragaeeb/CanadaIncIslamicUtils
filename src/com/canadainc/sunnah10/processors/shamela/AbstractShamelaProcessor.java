@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.processors.TypoProcessor;
 
 public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 {
@@ -63,5 +64,10 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 	@Override
 	public int getPageNumber(JSONObject json) {
 		return Integer.parseInt( json.get("pid").toString() );
+	}
+	
+	
+	protected Narration getPrev() {
+		return m_narrations.get( m_narrations.size()-1 );
 	}
 }

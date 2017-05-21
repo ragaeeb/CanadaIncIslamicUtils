@@ -12,8 +12,6 @@ import java.util.List;
 
 import org.jsoup.helper.StringUtil;
 
-import com.canadainc.sunnah10.Narration;
-
 public class DBUtils
 {
 	private static final String SUFFIX_NOT_NULL = " NOT NULL";
@@ -28,15 +26,16 @@ public class DBUtils
 	}
 
 
-	public static void isolateColumnNames(List<String> columns, String... toRemove)
+	public static List<String> isolateColumnNames(List<String> columns, String... toRemove)
 	{
 		//TODO: Bring all the manual usages to use this one
-		
+
 		for (int i = columns.size()-1; i >= 0; i--) {
 			columns.set( i, columns.get(i).split(" ")[0] );
 		}
-
+		
 		columns.removeAll( Arrays.asList(toRemove) );
+		return columns;
 	}
 
 
@@ -55,8 +54,8 @@ public class DBUtils
 			ps.setInt(i, value);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Creates a list of columns for a table that cannot be NULL.
 	 * @param primary A primary key. If this is <code>null</code> then a primary key is not created.
@@ -66,19 +65,19 @@ public class DBUtils
 	public static List<String> createNotNullColumns(String primary, String... columns)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		
+
 		if (primary != null) {
 			result.add(primary+SUFFIX_PRIMARY_KEY);
 		}
-		
+
 		for (String column: columns) {
 			result.add(column+SUFFIX_NOT_NULL);
 		}
-		
+
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Appends a list of columns to <code>result</code> that are allowed to be <code>null</code>.
 	 * @param result The list of columns to append the results to.
@@ -90,7 +89,7 @@ public class DBUtils
 		for (String column: columns) {
 			result.add(column);
 		}
-		
+
 		return result;
 	}
 

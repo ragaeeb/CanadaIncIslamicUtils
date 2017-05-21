@@ -23,8 +23,8 @@ public class ShamelaUtils
 	public static final boolean isHadithNumberNode(Node e) {
 		return isRedRegexNode(e, "\\d+$");
 	}
-	
-	
+
+
 	/**
 	 * Returns if this node is hadith number
 	 * @param e
@@ -42,21 +42,21 @@ public class ShamelaUtils
 		return false;
 	}
 
-	
+
 	public static boolean isArabicText(String text) {
-	    for (char charac : text.toCharArray()) {
-	        if (Character.UnicodeBlock.of(charac) == Character.UnicodeBlock.ARABIC) {
-	            return true;
-	        }
-	    }
-	    return false;
+		for (char charac : text.toCharArray()) {
+			if (Character.UnicodeBlock.of(charac) == Character.UnicodeBlock.ARABIC) {
+				return true;
+			}
+		}
+		return false;
 	}
-	
-	
+
+
 	public static final boolean isLineBreak(Node e) {
 		return e.nodeName().equals("br");
 	}
-	
+
 
 	public static final boolean isAllText(List<Node> nodes)
 	{
@@ -88,8 +88,8 @@ public class ShamelaUtils
 	public static final Narration createNewNarration(Narration n, Node e, List<Narration> narrations) {
 		return createNewNarration(n, parseHadithNumber(e), narrations);
 	}
-	
-	
+
+
 	public static final Narration createNewNarration(Narration n, int hadithNumber, List<Narration> narrations)
 	{
 		appendIfValid(n, narrations);
@@ -100,8 +100,8 @@ public class ShamelaUtils
 
 		return n;
 	}
-	
-	
+
+
 	public static final void appendIfValid(Narration n, List<Narration> narrations)
 	{
 		if ( n != null && !n.text.isEmpty() && isArabicText(n.text) ) { // 2 narrations in 1
@@ -189,7 +189,7 @@ public class ShamelaUtils
 	public static final String extractText(Node e)
 	{
 		StringBuilder sb = new StringBuilder();
-		
+
 		if ( isTextNode(e) )
 		{
 			TextNode tn = (TextNode)e;
@@ -227,11 +227,11 @@ public class ShamelaUtils
 	public static final boolean isHadithNumberValid(Node e, List<Narration> narrations, Narration n)
 	{
 		int current = ShamelaUtils.parseHadithNumber(e);
-		
+
 		if (n != null) {
 			return n.id <= current;
 		}
-		
+
 		return narrations.isEmpty() || ( narrations.get( narrations.size()-1 ).id <= current );
 	}
 
@@ -248,8 +248,8 @@ public class ShamelaUtils
 		String body = getTextNode(e).text().trim();
 		return body.substring( body.indexOf("-")+1 ).trim();
 	}
-	
-	
+
+
 	public static final void addIfSignatureMatches(List<Node> nodes, String collectionTitle, List<Narration> narrations)
 	{
 		for (Node e: nodes)
@@ -261,7 +261,7 @@ public class ShamelaUtils
 				if ( body.trim().equals(collectionTitle) )
 				{
 					e = e.nextSibling().nextSibling();
-					
+
 					if ( ShamelaUtils.isTextNode(e) )
 					{
 						body = ((TextNode)e).text().trim();
@@ -273,9 +273,20 @@ public class ShamelaUtils
 
 						try {
 							e = e.nextSibling().nextSibling().nextSibling().nextSibling().nextSibling();
-							
+
 							if (e != null) {
 								n.grading = ((TextNode)e).text().trim();
+
+								while ( e.nextSibling() != null )
+								{
+									e = e.nextSibling();
+
+									if ( ShamelaUtils.isClassSpanNode(e, "red") ) {
+										n.grading += ShamelaUtils.extractText(e);
+									} else if ( ShamelaUtils.isTextNode(e) ) {
+										n.grading += ((TextNode)e).text().trim();
+									}
+								}
 							}
 						} catch (NullPointerException ex) {}
 

@@ -1,10 +1,8 @@
 package com.canadainc.sunnah10.processors.shamela;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
@@ -14,39 +12,33 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.canadainc.common.io.IOUtils;
 import com.canadainc.islamicutils.io.DBUtils;
 import com.canadainc.sunnah10.Narration;
 import com.canadainc.sunnah10.processors.Processor;
 
 public class ShamelaPopulator
 {
-	private String m_path;
+	private String m_collection;
 	private Processor m_processor;
 	private static final String TABLE_NAME = "narrations";
 
 	public ShamelaPopulator(String path, Processor processor)
 	{
-		m_path = path;
+		m_collection = path;
 		m_processor = processor;
 	}
 
 
-	public void process() throws IOException
+	public void process(Connection c) throws Exception
 	{
-		File[] all = new File(m_path).listFiles( new FilenameFilter()
-		{
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".txt");
-			}
-		});
+		PreparedStatement ps = c.prepareStatement("SELECT * FROM "+m_collection+" ORDER BY id");
+		ResultSet rs = ps.executeQuery();
 
 		int lastSize = 0;
 
-		for (File f: all)
+		while ( rs.next() )
 		{
-			Object obj = JSONValue.parse( IOUtils.readFileUtf8(f) );
+			Object obj = JSONValue.parse( rs.getString("json") );
 			JSONArray arr = new JSONArray();
 
 			if (obj instanceof JSONArray) {
@@ -83,6 +75,9 @@ public class ShamelaPopulator
 				}
 			}
 		}
+		
+		ps.close();
+		rs.close();
 	}
 
 

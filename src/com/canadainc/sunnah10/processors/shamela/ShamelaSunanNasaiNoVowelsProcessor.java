@@ -9,6 +9,6 @@ public class ShamelaSunanNasaiNoVowelsProcessor extends AbstractShamelaProcessor
 {
 	@Override
 	public void process(List<Node> nodes, JSONObject json) {
-		ShamelaUtils.addIfSignatureMatches(nodes, "سنن النسائي", m_narrations);
+		ShamelaUtils.addIfSignatureMatches(nodes, "(سنن النسائي)", m_narrations);
 	}
 }
