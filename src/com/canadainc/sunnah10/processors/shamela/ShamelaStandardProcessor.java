@@ -8,7 +8,7 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaDawudZuhdProcessor extends AbstractShamelaProcessor
+public class ShamelaStandardProcessor extends AbstractShamelaProcessor
 {
 	@Override
 	public void process(List<Node> nodes, JSONObject json)

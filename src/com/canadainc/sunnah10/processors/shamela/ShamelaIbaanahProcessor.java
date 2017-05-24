@@ -4,39 +4,35 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
 public class ShamelaIbaanahProcessor extends AbstractShamelaProcessor
 {
+	private ShamelaStandardProcessor m_processor = new ShamelaStandardProcessor();
 	private int m_counter;
 
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
-		Narration n = null;
+		int currentSize = getNarrations().size();
+		m_processor.process(nodes, json);
 
-		for (Node e: nodes)
+		int newSize = getNarrations().size();
+
+		for (int i = currentSize; i < newSize; i++)
 		{
-			if ( ShamelaUtils.isHadithNumberNode(e) )
-			{
-				ShamelaUtils.appendIfValid(n, m_narrations);
-
-				n = new Narration();
-				n.id = ++m_counter;
-				n.inBookNumber = ShamelaUtils.parseHadithNumber(e);
-			} else if ( ShamelaUtils.isTextNode(e) ) {
-				String body = ((TextNode)e).text();
-
-				if (n != null) {
-					n.text += body;
-				}
-			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				n.text += ShamelaUtils.extractText(e);
-			}
+			Narration n = getNarrations().get(i);
+			n.inBookNumber = n.id;
+			n.id = ++m_counter;
 		}
+	}
 
-		ShamelaUtils.appendIfValid(n, m_narrations);
+	/* (non-Javadoc)
+	 * @see com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor#getNarrations()
+	 */
+	@Override
+	public List<Narration> getNarrations() {
+		return m_processor.getNarrations();
 	}
 }

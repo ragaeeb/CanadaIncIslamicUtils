@@ -4,14 +4,17 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
 public class ShamelaAwaanahProcessor extends AbstractShamelaProcessor
 {
+	private ShamelaContinuedProcessor m_processor;
+
 	public ShamelaAwaanahProcessor()
 	{
+		m_processor = new ShamelaContinuedProcessor();
+
 		m_typos.prependHadithNumber(10,10);
 		m_typos.prependHadithNumber(49,58);
 		m_typos.prependHadithNumber(51,60);
@@ -84,32 +87,12 @@ public class ShamelaAwaanahProcessor extends AbstractShamelaProcessor
 	}
 
 	@Override
-	public void process(List<Node> nodes, JSONObject json)
-	{
-		Narration n = null;
-
-		for (Node e: nodes)
-		{
-			if ( ShamelaUtils.isHadithNumberNode(e) ) {
-				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
-			} else if ( ShamelaUtils.isTextNode(e) ) {
-				String body = ((TextNode)e).text();
-				appendBody(n, body);
-			} else if ( ShamelaUtils.isTitleSpan(e) ) {
-				appendBody(n, ShamelaUtils.extractText(e));
-			} 
-		}
-
-		ShamelaUtils.appendIfValid(n, m_narrations);
+	public void process(List<Node> nodes, JSONObject json) {
+		m_processor.process(nodes, json);
 	}
 
-
-	private void appendBody(Narration n, String body)
-	{
-		if (n != null) {
-			n.text += body;
-		} else if ( !m_narrations.isEmpty() ) {
-			m_narrations.get( m_narrations.size()-1 ).text += body;
-		}
+	@Override
+	public List<Narration> getNarrations() {
+		return m_processor.getNarrations();
 	}
 }

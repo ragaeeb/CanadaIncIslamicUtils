@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
@@ -254,7 +255,7 @@ public class ShamelaUtils
 	{
 		for (Node e: nodes)
 		{
-			if ( ShamelaUtils.isTextNode(e) )
+			if ( isTextNode(e) )
 			{
 				String body = ((TextNode)e).text();
 
@@ -262,7 +263,7 @@ public class ShamelaUtils
 				{
 					e = e.nextSibling().nextSibling();
 
-					if ( ShamelaUtils.isTextNode(e) )
+					if ( isTextNode(e) )
 					{
 						body = ((TextNode)e).text().trim();
 
@@ -281,8 +282,8 @@ public class ShamelaUtils
 								{
 									e = e.nextSibling();
 
-									if ( ShamelaUtils.isClassSpanNode(e, "red") ) {
-										n.grading += ShamelaUtils.extractText(e);
+									if ( isClassSpanNode(e, "red") ) {
+										n.grading += extractText(e);
 									} else if ( ShamelaUtils.isTextNode(e) ) {
 										n.grading += ((TextNode)e).text().trim();
 									}
@@ -290,13 +291,36 @@ public class ShamelaUtils
 							}
 						} catch (NullPointerException ex) {}
 
-						ShamelaUtils.appendIfValid(n, narrations);
+						appendIfValid(n, narrations);
 					}
 				}
 			} 
 		}
 	}
 
+	
+	public static void processSimple(List<Node> nodes, JSONObject json, List<Narration> narrations)
+	{
+		Narration n = null;
+
+		for (Node e: nodes)
+		{
+			if ( isHadithNumberNode(e) ) {
+				n = createNewNarration(n, e, narrations);
+			} else if ( ShamelaUtils.isTextNode(e) ) {
+				String body = ((TextNode)e).text();
+
+				if (n != null) {
+					n.text += body;
+				}
+			} else if ( isTitleSpan(e) && (n != null) ) {
+				n.text += extractText(e);
+			}
+		}
+
+		appendIfValid(n, narrations);
+	}
+	
 
 	private static TextNode getTextNode(Node e)
 	{

@@ -19,19 +19,41 @@ import com.canadainc.sunnah10.processors.Processor;
 public class ShamelaPopulator
 {
 	private String m_collection;
+	private String m_path;
 	private Processor m_processor;
 	private static final String TABLE_NAME = "narrations";
 
-	public ShamelaPopulator(String path, Processor processor)
+	public ShamelaPopulator(String collection, Processor processor)
 	{
-		m_collection = path;
+		m_collection = collection;
 		m_processor = processor;
+	}
+
+
+	public ShamelaPopulator(String collection, String path, Processor processor)
+	{
+		m_collection = collection;
+		m_processor = processor;
+		m_path = path;
 	}
 
 
 	public void process(Connection c) throws Exception
 	{
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM "+m_collection+" ORDER BY id");
+		String query = "SELECT * FROM "+m_collection;
+
+		if (m_path != null) {
+			query += " WHERE path=?";
+		}
+
+		query += " ORDER BY id";
+		
+		PreparedStatement ps = c.prepareStatement(query);
+
+		if (m_path != null) {
+			ps.setString(1, m_path);
+		}
+
 		ResultSet rs = ps.executeQuery();
 
 		int lastSize = 0;
@@ -75,7 +97,7 @@ public class ShamelaPopulator
 				}
 			}
 		}
-		
+
 		ps.close();
 		rs.close();
 	}

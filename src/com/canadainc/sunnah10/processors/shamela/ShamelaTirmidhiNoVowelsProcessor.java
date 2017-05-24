@@ -7,8 +7,7 @@ import org.jsoup.nodes.Node;
 
 public class ShamelaTirmidhiNoVowelsProcessor extends AbstractShamelaProcessor
 {
-	public ShamelaTirmidhiNoVowelsProcessor()
-	{
+	public ShamelaTirmidhiNoVowelsProcessor() {
 		m_typos.add(1333, "1332", "1333");
 	}
 

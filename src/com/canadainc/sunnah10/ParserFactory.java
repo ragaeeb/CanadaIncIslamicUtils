@@ -5,10 +5,11 @@ import java.util.Map;
 
 import com.canadainc.sunnah10.processors.Processor;
 import com.canadainc.sunnah10.processors.SunnahDotComProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaContinuedProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaAwaanahProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaBazzaarProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaDarimiProcessor;
-import com.canadainc.sunnah10.processors.shamela.ShamelaDawudZuhdProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaStandardProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaIbaanahProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaIbnMajahNoVowelsProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaMustadrakProcessor;
@@ -32,7 +33,7 @@ public class ParserFactory
 		m_keyToProcessor.put("awaanah", ShamelaAwaanahProcessor.class);
 		m_keyToProcessor.put("bazzaar", ShamelaBazzaarProcessor.class);
 		m_keyToProcessor.put("darimi", ShamelaDarimiProcessor.class);
-		m_keyToProcessor.put("zuhd_dawud", ShamelaDawudZuhdProcessor.class);
+		m_keyToProcessor.put("zuhd_dawud", ShamelaStandardProcessor.class);
 		m_keyToProcessor.put("ibaanah", ShamelaIbaanahProcessor.class);
 		m_keyToProcessor.put("ibnmajah_no_vowels", ShamelaIbnMajahNoVowelsProcessor.class);
 		m_keyToProcessor.put("mustadrak", ShamelaMustadrakProcessor.class);
@@ -45,6 +46,7 @@ public class ParserFactory
 		m_keyToProcessor.put("sunnah.com", SunnahDotComProcessor.class);
 		m_keyToProcessor.put("targheeb", ShamelaTargheebProcessor.class);
 		m_keyToProcessor.put("jihad", ShamelaJihadProcessor.class);
+		m_keyToProcessor.put("zuhd_ahmad", ShamelaStandardProcessor.class);
 		m_keyToProcessor.put("zuhd_mubarak", ShamelaMubarakZuhdProcessor.class);
 	}
 

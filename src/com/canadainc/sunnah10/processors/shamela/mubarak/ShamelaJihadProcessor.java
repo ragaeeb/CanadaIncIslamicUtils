@@ -25,13 +25,11 @@ public class ShamelaJihadProcessor extends AbstractShamelaProcessor
 				
 				if ( ( body.startsWith("أَخْبَرَنَا") || body.startsWith("حَدَّثَنَا") ) && (n == null) )
 				{
-					Narration prev = m_narrations.get( m_narrations.size()-1 );
 					n = new Narration();
-					n.id = prev.id+1;
+					n.id = getPrev().id+1;
 					n.text = "";
 				} else if ( ( body.startsWith("قَالَ") || body.startsWith("فَقَالَ") ) && (n == null) ) {
-					Narration prev = m_narrations.get( m_narrations.size()-1 );
-					prev.text += "\n\n"+body;
+					getPrev().text += "\n\n"+body;
 				}
 				
 				if (n != null) {

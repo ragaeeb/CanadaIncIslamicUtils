@@ -46,7 +46,7 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 
 
 	@Override
-	public final List<Narration> getNarrations() {
+	public List<Narration> getNarrations() {
 		return m_narrations;
 	}
 
@@ -54,7 +54,6 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 	protected String preprocess(int page, String content) {
 		return content;
 	}
-
 
 	@Override
 	public boolean hasGrade(int id) {
