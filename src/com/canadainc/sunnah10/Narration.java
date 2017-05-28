@@ -18,46 +18,6 @@ public class Narration implements Comparable<Narration>
 	public int hashCode() {
 		return id;
 	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Narration other = (Narration) obj;
-		if (chapter == null) {
-			if (other.chapter != null)
-				return false;
-		} else if (!chapter.equals(other.chapter))
-			return false;
-		if ( !book.equals(other.book) )
-			return false;
-		if (hadithNumber == null) {
-			if (other.hadithNumber != null)
-				return false;
-		} else if (!hadithNumber.equals(other.hadithNumber))
-			return false;
-		if (id != other.id)
-			return false;
-		if (inBookNumber != other.inBookNumber)
-			return false;
-		if (translator != other.translator)
-			return false;
-		if (grading == null) {
-			if (other.grading != null)
-				return false;
-		} else if (!grading.equals(other.grading))
-			return false;
-		if (text == null) {
-			if (other.text != null)
-				return false;
-		} else if (!text.equals(other.text))
-			return false;
-		return true;
-	}
-
 
 	public Narration() {
 		super();
@@ -105,5 +65,14 @@ public class Narration implements Comparable<Narration>
 		} else {
 			return 1;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		return super.equals(obj);
 	}
 }

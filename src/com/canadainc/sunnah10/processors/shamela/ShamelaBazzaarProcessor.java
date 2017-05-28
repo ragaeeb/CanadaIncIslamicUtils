@@ -7,7 +7,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.processors.TypoProcessor;
 
 public class ShamelaBazzaarProcessor extends AbstractShamelaProcessor
 {
@@ -59,11 +58,11 @@ public class ShamelaBazzaarProcessor extends AbstractShamelaProcessor
 		m_typos.add(4824,"4489","4479");
 		m_typos.add(4939,"4624","4614");
 		m_typos.add(4953,"4638","4628");
-		m_typos.add(4984,"4660",TypoProcessor.decorateContent("4660-"));
+		m_typos.add(4984,"4660",ShamelaTypoProcessor.decorateContent("4660-"));
 		m_typos.add(5140,"4839","4829");
-		m_typos.add(5587,"5365،", TypoProcessor.decorateContent("5365-"));
-		m_typos.add(5668,"5475،", TypoProcessor.decorateContent("5475-"));
-		m_typos.add(5712,"5546،..،", TypoProcessor.decorateContent("5546-"));
+		m_typos.add(5587,"5365،", ShamelaTypoProcessor.decorateContent("5365-"));
+		m_typos.add(5668,"5475،", ShamelaTypoProcessor.decorateContent("5475-"));
+		m_typos.add(5712,"5546،..،", ShamelaTypoProcessor.decorateContent("5546-"));
 		m_typos.add(5752,"6501","5601");
 		m_typos.add(5859,"5671","5761");
 		m_typos.add(6212,"6189","6198");
@@ -72,7 +71,7 @@ public class ShamelaBazzaarProcessor extends AbstractShamelaProcessor
 		m_typos.add(7207,"7381","7271");
 		m_typos.add(7283,"7347","7348");
 		m_typos.add(7386,"7481","7471");
-		m_typos.add(7726,"7834م", TypoProcessor.decorateContent("7835"));
+		m_typos.add(7726,"7834م", ShamelaTypoProcessor.decorateContent("7835"));
 		m_typos.add(7784,"8900","7900");
 		m_typos.add(7819,"7839","7939");
 		m_typos.add(7862,"8984","7984");

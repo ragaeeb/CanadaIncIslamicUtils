@@ -1,6 +1,8 @@
 package com.canadainc.sunnah10.processors.shamela;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
@@ -14,6 +16,7 @@ public class ShamelaSunanNasaiVowelledProcessor extends AbstractShamelaProcessor
 {
 	private Book m_book;
 	private Chapter m_chapter;
+	private final Map<Integer,Integer> m_hadithNumToIndex = new HashMap<>();
 
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
@@ -32,6 +35,8 @@ public class ShamelaSunanNasaiVowelledProcessor extends AbstractShamelaProcessor
 					m_book = new Book(number, ShamelaUtils.extractText(next));
 					break;
 				} else {
+					appendWithIndex(n);
+
 					n = ShamelaUtils.createNewNarration(n, number, m_narrations);
 					n.book = m_book;
 					n.chapter = m_chapter;
@@ -59,7 +64,25 @@ public class ShamelaSunanNasaiVowelledProcessor extends AbstractShamelaProcessor
 			}
 		}
 
-		ShamelaUtils.appendIfValid(n, m_narrations);
-		ShamelaUtils.appendIfValid(inner, m_narrations);
+		appendWithIndex(n);
+		appendWithIndex(inner);
+	}
+
+
+	private void appendWithIndex(Narration n)
+	{
+		if ( n != null && !n.text.isEmpty() && ShamelaUtils.isArabicText(n.text) )
+		{
+			Integer index = m_hadithNumToIndex.get(n.id);
+
+			if (index == null)
+			{
+				m_hadithNumToIndex.put(n.id, m_narrations.size());
+				m_narrations.add(n);
+			} else {
+				Narration prev = m_narrations.get(index);
+				prev.text += " "+n.text;
+			}
+		}
 	}
 }

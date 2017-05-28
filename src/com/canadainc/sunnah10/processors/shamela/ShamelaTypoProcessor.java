@@ -1,15 +1,15 @@
-package com.canadainc.sunnah10.processors;
+package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypoProcessor
+public class ShamelaTypoProcessor
 {
 	private Map<Integer, Collection<Typo>> m_typos;
 
-	public TypoProcessor() {
+	public ShamelaTypoProcessor() {
 		m_typos = new HashMap<>();
 	}
 

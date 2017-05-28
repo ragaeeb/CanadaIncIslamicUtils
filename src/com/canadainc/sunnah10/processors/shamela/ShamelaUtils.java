@@ -1,6 +1,7 @@
 package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class ShamelaUtils
 
 		return true;
 	}
-
+	
 
 	public static final String[] sortLongestToShortest(String...input)
 	{
@@ -103,11 +104,14 @@ public class ShamelaUtils
 	}
 
 
-	public static final void appendIfValid(Narration n, List<Narration> narrations)
+	public static final boolean appendIfValid(Narration n, List<Narration> narrations)
 	{
 		if ( n != null && !n.text.isEmpty() && isArabicText(n.text) ) { // 2 narrations in 1
 			narrations.add(n);
+			return true;
 		}
+		
+		return false;
 	}
 
 

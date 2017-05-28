@@ -1,19 +1,20 @@
 package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.processors.TypoProcessor;
 
 public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 {
 	protected final ArrayList<Narration> m_narrations = new ArrayList<>();
-	protected final TypoProcessor m_typos = new TypoProcessor();
+	protected final ShamelaTypoProcessor m_typos = new ShamelaTypoProcessor();
 
 	protected AbstractShamelaProcessor()
 	{

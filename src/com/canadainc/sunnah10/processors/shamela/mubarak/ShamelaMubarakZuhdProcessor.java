@@ -8,9 +8,9 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
-import com.canadainc.sunnah10.processors.TypoProcessor;
 import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
+import com.canadainc.sunnah10.processors.shamela.ShamelaTypoProcessor;
 
 public class ShamelaMubarakZuhdProcessor extends AbstractShamelaProcessor
 {
@@ -91,7 +91,7 @@ public class ShamelaMubarakZuhdProcessor extends AbstractShamelaProcessor
 		if (page > 1652 && !content.startsWith("<span"))
 		{
 			int id = m_narrations.get( m_narrations.size()-1 ).id+1;
-			content = TypoProcessor.decorateContent( String.valueOf(id) )+content;
+			content = ShamelaTypoProcessor.decorateContent( String.valueOf(id) )+content;
 			return content;
 		}
 
