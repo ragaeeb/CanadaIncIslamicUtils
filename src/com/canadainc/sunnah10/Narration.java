@@ -30,6 +30,13 @@ public class Narration implements Comparable<Narration>
 		this();
 		this.id = id;
 	}
+	
+	
+	public Narration setHadithNumber(String hadithNumber) {
+		this.hadithNumber = hadithNumber;
+		return this;
+	}
+	
 
 	public Narration(int id, String babName, int babNumber, int bookId, String bookName, String hadithNumber,
 			int inBookNumber, String text) {

@@ -13,7 +13,6 @@ import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
 public class ShamelaSilsilaDaifProcessor extends AbstractShamelaProcessor
 {
-	private static final int[] IGNORED_PAGES = new int[]{140,6829,6830,6831};
 	public static final int[] GRADELESS_AHADEETH = new int[]{123,1038,2859,3615,3622,3697,3763,4022,4301,4387,4492,4604,4793,5209,5406,5501,5797,5961,6204};
 	private static final String[] GRADES = ShamelaUtils.sortLongestToShortest("لا يصح", "لا أعلم له أصلا", "كذب", "كذب لا أصل له", "شاذ لا يصح", "مدرج الشطر الآخر",
 			"ليس بحديث", "منكر بذكر الملكين", "منكر جداً بزيادة: (وواحدة)", "موضوع بهذا التمام",
@@ -27,6 +26,8 @@ public class ShamelaSilsilaDaifProcessor extends AbstractShamelaProcessor
 
 	public ShamelaSilsilaDaifProcessor()
 	{
+		m_typos.ignore(140,6829,6830,6831);
+		
 		m_typos.add(6426, "<span class=\"title\">4835/ م</span>", "<span class=\"red\">4835 - </span>");
 		m_typos.add(7130, "5179 (1) - ", "<span class=\"red\">5179 - </span>");
 		m_typos.add(10865, "6887 (**) - ", "<span class=\"red\">6887 - </span>");
@@ -144,17 +145,6 @@ public class ShamelaSilsilaDaifProcessor extends AbstractShamelaProcessor
 		} else {
 			n.text += body;
 		}
-	}
-
-
-	@Override
-	public String preprocess(int page, String content)
-	{
-		if ( ArrayUtils.indexOf(IGNORED_PAGES, page) != -1 ) {
-			return null;
-		}
-
-		return super.preprocess(page, content);
 	}
 
 	@Override

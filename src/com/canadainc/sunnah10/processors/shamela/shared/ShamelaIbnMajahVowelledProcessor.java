@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.processors.shamela;
+package com.canadainc.sunnah10.processors.shamela.shared;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import org.jsoup.nodes.TextNode;
 import com.canadainc.sunnah10.Book;
 import com.canadainc.sunnah10.Chapter;
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
 public class ShamelaIbnMajahVowelledProcessor extends AbstractShamelaProcessor
 {

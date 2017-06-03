@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.processors;
+package com.canadainc.sunnah10.processors.sunnah.com;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.json.simple.JSONObject;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.processors.Processor;
 
 public class SunnahTypoProcessor
 {
@@ -14,9 +15,12 @@ public class SunnahTypoProcessor
 	private final Map<Integer,Integer> m_idToDiff = new HashMap<>();
 	private final Map<Integer,Decomposition> m_idToBreakData = new HashMap<>();
 	private final Map<Integer,Integer> m_hadithNumToIndex = new HashMap<>();
+	private int[] m_ignored;
 
 	/** Narrations to merge with existing ones. If the value is 0, then we will look for a hadeeth with the same number. */
 	private final Map<Integer,Integer> m_toMerge = new HashMap<>();
+
+	private static final int MERGE_FLAG_SELF_PRE = -1;
 
 
 	/**
@@ -31,6 +35,11 @@ public class SunnahTypoProcessor
 
 	public void track(int hadithNumber, int index) {
 		m_hadithNumToIndex.put(hadithNumber, index);
+	}
+
+
+	public void ignore(int ...pages) {
+		m_ignored = pages;
 	}
 
 
@@ -50,7 +59,7 @@ public class SunnahTypoProcessor
 	 * @param id
 	 */
 	public void merge(int id) {
-		merge(id,0);
+		merge(id, MERGE_FLAG_SELF_PRE);
 	}
 
 
@@ -65,7 +74,7 @@ public class SunnahTypoProcessor
 		if (fromId >= toId) {
 			throw new IllegalArgumentException("Invalid range specified: "+fromId+"; "+toId+"; "+diff);
 		}
-		
+
 		for (int i = fromId; i <= toId; i++)
 		{
 			if ( !ArrayUtils.contains(exclusions, i) ) {
@@ -86,12 +95,29 @@ public class SunnahTypoProcessor
 	}
 
 
+	public void decompose(int narrationId, String breakPoint) {
+		decompose(narrationId, MERGE_FLAG_SELF_PRE, breakPoint);
+	}
+
+
+	private static int parseHadithNumber(JSONObject json)
+	{
+		String hadithNumStr = (String)json.get("hadithNumber");
+		int initHadithNumber = hadithNumStr != null && hadithNumStr.matches("\\d+$") ? Integer.parseInt(hadithNumStr) : 0;
+
+		return initHadithNumber;
+	}
+
+
 	public boolean process(JSONObject json, Processor p)
 	{
 		String urn = (String)json.get("englishURN");
 		int id = urn == null ? 0 : Integer.parseInt(urn);
-		String hadithNumStr = (String)json.get("hadithNumber");
-		int initHadithNumber = hadithNumStr != null && hadithNumStr.matches("\\d+$") ? Integer.parseInt(hadithNumStr) : 0;
+		int initHadithNumber = parseHadithNumber(json);
+
+		if ( m_ignored != null && ArrayUtils.contains(m_ignored, id) ) {
+			return false;
+		}
 
 		if ( m_idToFixedHadithNum.containsKey(id) ) {
 			initHadithNumber = m_idToFixedHadithNum.get(id);
@@ -112,6 +138,10 @@ public class SunnahTypoProcessor
 
 			if (start >= 0)
 			{
+				if (d.hadithNumber == MERGE_FLAG_SELF_PRE) {
+					d.hadithNumber = initHadithNumber;
+				}
+
 				fillHadithData(json, body.substring(start).trim(), d.hadithNumber+1);
 
 				JSONObject prev = new JSONObject(json);
@@ -124,13 +154,13 @@ public class SunnahTypoProcessor
 		{
 			int hadithNum = m_toMerge.get(id);
 
-			if (hadithNum == 0) {
+			if (hadithNum == MERGE_FLAG_SELF_PRE) {
 				hadithNum = initHadithNumber;
 			}
 
-			Integer index = m_hadithNumToIndex.get(hadithNum);
+			int index = getIndex(hadithNum);
 
-			if (index != null) {
+			if (index >= 0) {
 				Narration n = p.getNarrations().get(index);
 				n.text += " "+json.get("hadithText").toString();
 			}
@@ -139,6 +169,13 @@ public class SunnahTypoProcessor
 		}
 
 		return true;
+	}
+
+
+	public int getIndex(int hadithNumber)
+	{
+		Integer index = m_hadithNumToIndex.get(hadithNumber);
+		return index == null ? -1 : index;
 	}
 
 

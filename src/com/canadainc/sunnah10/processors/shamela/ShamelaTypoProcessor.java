@@ -5,9 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class ShamelaTypoProcessor
 {
 	private Map<Integer, Collection<Typo>> m_typos;
+	private int[] m_ignored;
 
 	public ShamelaTypoProcessor() {
 		m_typos = new HashMap<>();
@@ -16,6 +19,11 @@ public class ShamelaTypoProcessor
 
 	public void add(int pageNumber, String value, String replacement) {
 		addTypo(pageNumber, new Typo(value, replacement) );
+	}
+
+
+	public void add(int pageNumber, String value) {
+		add(pageNumber, value, String.valueOf(pageNumber));
 	}
 
 
@@ -29,6 +37,11 @@ public class ShamelaTypoProcessor
 
 		typos.add(t);
 		m_typos.put(pageNumber, typos);
+	}
+
+
+	public void ignore(int ...pages) {
+		m_ignored = pages;
 	}
 
 
@@ -60,21 +73,23 @@ public class ShamelaTypoProcessor
 	public static final String decorateContent(String inner) {
 		return decorate(inner+" - ");
 	}
-	
+
 	public static final String decorate(String inner) {
 		return "<span class=\"red\">"+inner+"</span>";
 	}
 
 
-	private String process(String content, String value, String replacement, boolean regex)
-	{
-		content = regex ? content.replaceAll(value, replacement) : content.replace(value, replacement);
-		return content;
+	private String process(String content, String value, String replacement, boolean regex) {
+		return regex ? content.replaceAll(value, replacement) : content.replace(value, replacement);
 	}
 
 
 	public String process(int pageNumber, String content)
 	{
+		if ( m_ignored != null && ArrayUtils.contains(m_ignored, pageNumber) ) {
+			return null;
+		}
+
 		Collection<Typo> typos = m_typos.get(pageNumber);
 
 		if (typos != null)
@@ -100,8 +115,8 @@ public class ShamelaTypoProcessor
 
 		return content;
 	}
-	
-	
+
+
 	public class Typo
 	{
 		public String value;
@@ -111,7 +126,7 @@ public class ShamelaTypoProcessor
 		public String endMatcher;
 		public String inner;
 		public boolean forward;
-		
+
 		public Typo(String value, String replacement) {
 			this(value, replacement, null);
 		}
@@ -123,8 +138,8 @@ public class ShamelaTypoProcessor
 			this.replacement = replacement;
 			this.type = type;
 		}
-		
-		
+
+
 		public Typo(String startMatcher, String endMatcher, String inner, String replacement,
 				boolean forward)
 		{
@@ -136,7 +151,7 @@ public class ShamelaTypoProcessor
 			this.forward = forward;
 			this.type = TypoType.Stripper;
 		}
-		
+
 
 
 		/* (non-Javadoc)
@@ -219,7 +234,7 @@ public class ShamelaTypoProcessor
 					+ startMatcher + ", endMatcher=" + endMatcher + ", inner=" + inner + ", forward=" + forward + "]";
 		}
 	}
-	
+
 	public enum TypoType {
 		Prepend, Regex, Stripper
 	}

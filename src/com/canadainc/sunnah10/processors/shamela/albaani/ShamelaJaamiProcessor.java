@@ -2,7 +2,6 @@ package com.canadainc.sunnah10.processors.shamela.albaani;
 
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
@@ -14,10 +13,11 @@ import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 public class ShamelaJaamiProcessor extends AbstractShamelaProcessor
 {
 	private static final String[] GRADES = ShamelaUtils.sortLongestToShortest("صحيح", "حسن", "ضعيف", "أقرب للضعف", "الصحيح");
-	private static final int[] IGNORED_PAGES = new int[]{608};
 
 	public ShamelaJaamiProcessor()
 	{
+		m_typos.ignore(608);
+		
 		m_typos.add(5, "صحيح1", "صحيح");
 		m_typos.add(98, "569_", "569 ");
 		m_typos.add(182, "- 5071079", "1079 - 507");
@@ -117,17 +117,6 @@ public class ShamelaJaamiProcessor extends AbstractShamelaProcessor
 		} else {
 			n.text += body;
 		}
-	}
-
-
-	@Override
-	public String preprocess(int page, String content)
-	{
-		if ( ArrayUtils.indexOf(IGNORED_PAGES, page) != -1 ) {
-			return null;
-		}
-
-		return super.preprocess(page, content);
 	}
 
 	@Override
