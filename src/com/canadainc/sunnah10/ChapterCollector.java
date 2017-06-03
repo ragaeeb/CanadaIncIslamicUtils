@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.canadainc.sunnah10.utils.Dictionary;
+
 public class ChapterCollector implements Collector
 {
 	private Set<Chapter> m_chapters;

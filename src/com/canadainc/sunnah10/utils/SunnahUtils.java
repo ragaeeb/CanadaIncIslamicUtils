@@ -1,4 +1,4 @@
-package com.canadainc.sunnah10.controller;
+package com.canadainc.sunnah10.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

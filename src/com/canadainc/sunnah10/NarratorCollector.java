@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.canadainc.sunnah10.utils.Dictionary;
+
 public class NarratorCollector implements Collector
 {
 	private Pattern m_narratedByPattern;

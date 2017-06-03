@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.canadainc.islamicutils.io.ShamelaReader;
 import com.canadainc.sunnah10.processors.shamela.ShamelaSunanReader;
+import com.canadainc.sunnah10.utils.Dictionary;
 
 public class SunnahPopulator
 {

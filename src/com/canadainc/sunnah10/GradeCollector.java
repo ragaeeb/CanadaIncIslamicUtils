@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.canadainc.sunnah10.utils.Dictionary;
+
 public class GradeCollector implements Collector
 {
 	private Map<Integer, Grade> m_grade;

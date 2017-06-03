@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.canadainc.sunnah10.utils.Dictionary;
+
 public class NarrationCollector implements Collector
 {
 	/** (Key: Language, Value: [<Key: Collection, Value: Translator>]) */
