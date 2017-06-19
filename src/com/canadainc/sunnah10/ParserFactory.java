@@ -57,10 +57,11 @@ public class ParserFactory
 		m_keyToProcessor.put("zuhd_dawud", ShamelaStandardProcessor.class);
 		m_keyToProcessor.put("zuhd_mubarak", ShamelaMubarakZuhdProcessor.class);
 
-		m_keyToProcessor.put("sunnah_com/english/abudawud", AbstractSunnahDotComProcessor.class);
 		m_keyToProcessor.put("sunnah_com/english/ibnmajah", IbnMajahProcessor.class);
+		m_keyToProcessor.put("sunnah_com/arabic/ibnmajah", IbnMajahProcessor.class);
 		m_keyToProcessor.put("sunnah_com/english/nasai", NasaiProcessor.class);
-		m_keyToProcessor.put("sunnah_com/english/tirmidhi", TirmidhiProcessor.class);
+		m_keyToProcessor.put("sunnah_com/english/tirmidhi", TirmidhiProcessor.class);		
+		m_keyToProcessor.put("sunnah_com/arabic/tirmidhi", TirmidhiProcessor.class);
 	}
 
 
@@ -69,7 +70,14 @@ public class ParserFactory
 	}
 
 
-	public Processor getProcessor(String key) throws InstantiationException, IllegalAccessException {
-		return m_keyToProcessor.get(key).newInstance();
+	public Processor getProcessor(String key) throws InstantiationException, IllegalAccessException
+	{
+		Class<? extends Processor> c = m_keyToProcessor.get(key);
+
+		if ( c == null && key.startsWith("sunnah_com/") ) {
+			c = AbstractSunnahDotComProcessor.class;
+		}
+
+		return c.newInstance();
 	}
 }

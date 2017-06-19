@@ -37,7 +37,7 @@ public class ShamelaSunanNasaiVowelledProcessor extends AbstractShamelaProcessor
 					m_book = new Book(number, ShamelaUtils.extractText(next));
 					break;
 				} else {
-					appendWithIndex(n);
+					ShamelaUtils.appendWithIndex(n, m_hadithNumToIndex, m_narrations);
 
 					n = ShamelaUtils.createNewNarration(n, number, m_narrations);
 					n.book = m_book;
@@ -66,25 +66,7 @@ public class ShamelaSunanNasaiVowelledProcessor extends AbstractShamelaProcessor
 			}
 		}
 
-		appendWithIndex(n);
-		appendWithIndex(inner);
-	}
-
-
-	private void appendWithIndex(Narration n)
-	{
-		if ( n != null && !n.text.isEmpty() && ShamelaUtils.isArabicText(n.text) )
-		{
-			Integer index = m_hadithNumToIndex.get(n.id);
-
-			if (index == null)
-			{
-				m_hadithNumToIndex.put(n.id, m_narrations.size());
-				m_narrations.add(n);
-			} else {
-				Narration prev = m_narrations.get(index);
-				prev.text += " "+n.text;
-			}
-		}
+		ShamelaUtils.appendWithIndex(n, m_hadithNumToIndex, m_narrations);
+		ShamelaUtils.appendWithIndex(inner, m_hadithNumToIndex, m_narrations);
 	}
 }

@@ -42,4 +42,10 @@ public interface Processor
 	
 	
 	public int getPageNumber(JSONObject json);
+	
+	
+	/**
+	 * Does any cleanup it needs to.
+	 */
+	public void postProcess();
 }

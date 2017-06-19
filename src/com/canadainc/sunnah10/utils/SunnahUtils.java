@@ -14,14 +14,23 @@ public class SunnahUtils
 		List<Narration> result = new ArrayList<Narration>( narrations.size() );
 		result.addAll(narrations);
 
-		Collections.sort(result, new Comparator<Narration>()
-		{
-			@Override
-			public int compare(Narration n1, Narration n2) {
-				return idBased ? n1.id-n2.id : Integer.parseInt(n1.hadithNumber)-Integer.parseInt(n2.hadithNumber);
-			}
-		});
+		if (!idBased) {
+			Collections.sort(result);
+		} else {
+			Collections.sort(result, new Comparator<Narration>()
+			{
+				@Override
+				public int compare(Narration n1, Narration n2) {
+					return parseHadithNumber(n1)-parseHadithNumber(n2);
+				}
+			});
+		}
 
 		return result;
+	}
+	
+	
+	public static int parseHadithNumber(Narration n) {
+		return Integer.parseInt(n.hadithNumber.replaceAll("[\\sa-z]+", ""));
 	}
 }

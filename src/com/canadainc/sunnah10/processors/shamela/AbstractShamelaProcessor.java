@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +24,19 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 	@Override
 	public final boolean preprocess(JSONObject json)
 	{
+		JSONArray ja = (JSONArray)json.get("data");
+		
+		if (ja != null)
+		{
+			for (Object o: ja)
+			{
+				JSONObject j = (JSONObject)o;
+				
+			}
+			
+			return false;
+		}
+		
 		int page = getPageNumber(json);
 		String content = json.get("content").toString();
 		content = preprocess(page, content);
@@ -69,5 +83,13 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 	
 	protected Narration getPrev() {
 		return m_narrations.get( m_narrations.size()-1 );
+	}
+
+	/* (non-Javadoc)
+	 * @see com.canadainc.sunnah10.processors.Processor#postProcess()
+	 */
+	@Override
+	public void postProcess()
+	{
 	}
 }

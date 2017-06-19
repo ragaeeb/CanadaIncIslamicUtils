@@ -1,6 +1,7 @@
 package com.canadainc.sunnah10.processors.sunnah.com;
 
 import com.canadainc.sunnah10.Narration;
+import com.canadainc.sunnah10.utils.SunnahUtils;
 
 public class TirmidhiProcessor extends AbstractSunnahDotComProcessor
 {
@@ -29,8 +30,10 @@ public class TirmidhiProcessor extends AbstractSunnahDotComProcessor
 		m_typos.fixHadithNumber(636090, 3730);
 		m_typos.fixHadithNumber(636100, 3731);
 		m_typos.fixHadithNumber(680790, 3368);
-		
+		m_typos.fixHadithNumber(704571, 455);
+
 		m_typos.decompose(673911, "Al-Hasan said");
+		m_typos.decompose(704600, 457, "وَقَدْ رُوِيَ ");
 	}
 
 
@@ -40,12 +43,12 @@ public class TirmidhiProcessor extends AbstractSunnahDotComProcessor
 	@Override
 	public void process(Narration n)
 	{
-		int hadithNumber = Integer.parseInt(n.hadithNumber);
-		
+		int hadithNumber = SunnahUtils.parseHadithNumber(n);
+
 		if (hadithNumber > 0)
 		{
 			int index = m_typos.getIndex(hadithNumber);
-			
+
 			if (index >= 0) { // it already exists, merge it
 				Narration other = m_narrations.get(index);
 				other.text += " "+n.text;

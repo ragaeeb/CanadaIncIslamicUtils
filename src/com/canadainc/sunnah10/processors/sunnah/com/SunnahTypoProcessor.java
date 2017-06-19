@@ -112,6 +112,11 @@ public class SunnahTypoProcessor
 	public boolean process(JSONObject json, Processor p)
 	{
 		String urn = (String)json.get("englishURN");
+
+		if (urn == null) {
+			urn = (String)json.get("arabicURN");
+		}
+
 		int id = urn == null ? 0 : Integer.parseInt(urn);
 		int initHadithNumber = parseHadithNumber(json);
 
@@ -144,9 +149,12 @@ public class SunnahTypoProcessor
 
 				fillHadithData(json, body.substring(start).trim(), d.hadithNumber+1);
 
+				// TODO: MUST +1 on the narration ID
 				JSONObject prev = new JSONObject(json);
 				fillHadithData(prev, body.substring(0,start).trim(), d.hadithNumber);
 				p.process(prev);
+			} else {
+				System.err.println("BreakPoint not found: "+id);
 			}
 		}
 

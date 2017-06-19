@@ -3,6 +3,7 @@ package com.canadainc.sunnah10.processors.shamela;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.jsoup.nodes.Node;
@@ -70,7 +71,7 @@ public class ShamelaUtils
 
 		return true;
 	}
-	
+
 
 	public static final String[] sortLongestToShortest(String...input)
 	{
@@ -109,7 +110,7 @@ public class ShamelaUtils
 			narrations.add(n);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -301,7 +302,7 @@ public class ShamelaUtils
 		}
 	}
 
-	
+
 	public static void processSimple(List<Node> nodes, JSONObject json, List<Narration> narrations)
 	{
 		Narration n = null;
@@ -324,6 +325,28 @@ public class ShamelaUtils
 		appendIfValid(n, narrations);
 	}
 	
+	
+	public static void appendWithIndex(Narration n, Map<Integer,Integer> hadithNumToIndex, List<Narration> narrations)
+	{
+		if ( n != null && !n.text.isEmpty() && ShamelaUtils.isArabicText(n.text) )
+		{
+			Integer index = hadithNumToIndex.get(n.id);
+
+			if (index == null)
+			{
+				hadithNumToIndex.put(n.id, narrations.size());
+				narrations.add(n);
+			} else {
+				Narration prev = narrations.get(index);
+				prev.text += " "+n.text;
+				
+				if (n.grading != null) {
+					prev.grading += "; "+n.grading;
+				}
+			}
+		}
+	}
+
 
 	private static TextNode getTextNode(Node e)
 	{

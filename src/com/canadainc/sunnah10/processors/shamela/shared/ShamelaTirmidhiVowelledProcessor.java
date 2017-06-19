@@ -45,7 +45,7 @@ public class ShamelaTirmidhiVowelledProcessor extends AbstractShamelaProcessor
 					m_book = new Book(number, ShamelaUtils.extractText(next).trim());
 					break;
 				} else {
-					appendWithIndex(n);
+					ShamelaUtils.appendWithIndex(n, m_hadithNumToIndex, m_narrations);
 
 					n = ShamelaUtils.createNewNarration(n, number, m_narrations);
 					n.book = m_book;
@@ -62,31 +62,13 @@ public class ShamelaTirmidhiVowelledProcessor extends AbstractShamelaProcessor
 				m_chapter = new Chapter(chapter, m_chapter == null ? 1 : m_chapter.number+1);
 			} else if ( ShamelaUtils.isClassSpanNode(e, "footnote") ) { // grading
 				Node node = e.childNode(0);
-				
+
 				if ( ShamelaUtils.extractText(node).trim().equals("[حكم الألباني] :") ) {
 					n.grading = ((TextNode)node.nextSibling()).text().trim();
 				}
 			}
 		}
 
-		appendWithIndex(n);
-	}
-	
-	
-	private void appendWithIndex(Narration n)
-	{
-		if ( n != null && !n.text.isEmpty() && ShamelaUtils.isArabicText(n.text) )
-		{
-			Integer index = m_hadithNumToIndex.get(n.id);
-
-			if (index == null)
-			{
-				m_hadithNumToIndex.put(n.id, m_narrations.size());
-				m_narrations.add(n);
-			} else {
-				Narration prev = m_narrations.get(index);
-				prev.text += " "+n.text;
-			}
-		}
+		ShamelaUtils.appendWithIndex(n, m_hadithNumToIndex, m_narrations);
 	}
 }

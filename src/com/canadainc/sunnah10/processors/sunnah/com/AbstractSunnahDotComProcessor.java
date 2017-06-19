@@ -1,7 +1,9 @@
 package com.canadainc.sunnah10.processors.sunnah.com;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -19,13 +21,21 @@ public class AbstractSunnahDotComProcessor implements Processor
 {
 	private static final String[] GRADE_FIELDS = new String[]{"grade1", "grade2"};
 	private static final String[] PRIMARY_KEYS = new String[]{"arabicURN", "englishURN"};
+	private static final String[] TRANSLATION_KEYS = new String[]{"matchingArabicURN", "matchingEnglishURN"};
 	protected final ArrayList<Narration> m_narrations = new ArrayList<>();
 	protected final SunnahTypoProcessor m_typos = new SunnahTypoProcessor();
+	private Map<Integer,Integer> m_idToTranslation = new HashMap<>();
+	private boolean m_collectGrade;
 
 
 	@Override
 	public boolean preprocess(JSONObject json) {
 		return m_typos.process(json, this);
+	}
+	
+	
+	protected void setCollectGrade(boolean value) {
+		m_collectGrade = value;
 	}
 	
 	
@@ -48,8 +58,21 @@ public class AbstractSunnahDotComProcessor implements Processor
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");
-		n.grading = (String)extractAvailable(GRADE_FIELDS, json);
+		
+		if (m_collectGrade) {
+			n.grading = (String)extractAvailable(GRADE_FIELDS, json);
+		}
+
 		n.commentary = (String)json.get("annotations");
+		
+		String translationValue = extractAvailable(TRANSLATION_KEYS, json);
+		int translationId = !translationValue.isEmpty() ? Integer.parseInt( translationValue ) : 0;
+		
+		if (translationId > 0) {
+			m_idToTranslation.put(n.id, translationId);
+		} else {
+			System.err.println("TranslationMissingFor: "+n.id);
+		}
 
 		process(n);
 	}
@@ -102,6 +125,11 @@ public class AbstractSunnahDotComProcessor implements Processor
 
 		return result;
 	}
+	
+	
+	public Map<Integer,Integer> getTranslations() {
+		return m_idToTranslation;
+	}
 
 
 	/**
@@ -109,5 +137,11 @@ public class AbstractSunnahDotComProcessor implements Processor
 	 */
 	SunnahTypoProcessor getTypos() {
 		return m_typos;
+	}
+
+
+	@Override
+	public void postProcess()
+	{
 	}
 }

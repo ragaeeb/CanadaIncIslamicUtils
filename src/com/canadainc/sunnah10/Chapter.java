@@ -15,6 +15,14 @@ public class Chapter implements Comparable<Chapter>
 		this.title = name;
 		this.number = number;
 	}
+	
+	
+	public Chapter(Chapter c)
+	{
+		this.number = c.number;
+		this.title = c.title;
+	}
+	
 
 	@Override
 	public int hashCode() {

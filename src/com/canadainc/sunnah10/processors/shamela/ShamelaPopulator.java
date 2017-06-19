@@ -71,6 +71,11 @@ public class ShamelaPopulator
 			for (Object o: arr)
 			{
 				JSONObject json = (JSONObject)o;
+				
+				if (json == null) {
+					System.err.println("Invalid JSON: "+rs.getString("file_name"));
+				}
+				
 				boolean process = m_processor.preprocess(json);
 
 				if (process)
