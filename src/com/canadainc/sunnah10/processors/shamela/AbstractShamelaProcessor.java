@@ -1,11 +1,8 @@
 package com.canadainc.sunnah10.processors.shamela;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,16 +21,7 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 	@Override
 	public final boolean preprocess(JSONObject json)
 	{
-		JSONArray ja = (JSONArray)json.get("data");
-		
-		if (ja != null)
-		{
-			for (Object o: ja)
-			{
-				JSONObject j = (JSONObject)o;
-				
-			}
-			
+		if ( json.containsKey("data") ) { // index file for book titles and chapters
 			return false;
 		}
 		
@@ -46,6 +34,11 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 		}
 
 		content = m_typos.process(page, content);
+
+		if (content == null) {
+			return false;
+		}
+
 		json.put("content", content);
 
 		return true;
@@ -77,13 +70,19 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 
 	@Override
 	public int getPageNumber(JSONObject json) {
+
+		if (json.get("pid") == null) {
+			System.out.println(json);
+		}
+		
 		return Integer.parseInt( json.get("pid").toString() );
 	}
-	
-	
+
+
 	protected Narration getPrev() {
 		return m_narrations.get( m_narrations.size()-1 );
 	}
+
 
 	/* (non-Javadoc)
 	 * @see com.canadainc.sunnah10.processors.Processor#postProcess()

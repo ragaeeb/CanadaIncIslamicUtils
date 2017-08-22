@@ -21,6 +21,11 @@ public class ShamelaStandardProcessor extends AbstractShamelaProcessor
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
+				
+				//if ( body.contains("محمد") && body.contains("إسحاق") && body.contains("٥٠٠") ) {
+				if ( body.contains("موسى بن إسحاق") && body.contains("القاضي") && body.contains("بالري") ) {
+					System.out.println("***SDFLKJ: "+json.get("pid"));
+				}
 
 				if (n != null) {
 					n.text += body;

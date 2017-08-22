@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
 public class DBUtils
@@ -91,6 +94,25 @@ public class DBUtils
 		}
 
 		return result;
+	}
+	
+	
+	public static List<String> filterNullable(List<String> columns)
+	{
+		columns = columns.stream().filter(p -> p.endsWith(SUFFIX_NOT_NULL)).collect(Collectors.toList());
+		
+		for (int i = 0; i < columns.size(); i++) {
+			columns.set(i, columns.get(i).split(" ")[0]);
+		}
+		
+		return columns;
+	}
+	
+	
+	public static PreparedStatement createInsert(Connection c, String table, List<String> columns) throws SQLException
+	{
+		System.out.println("INSERT INTO "+table+" ("+StringUtils.join(columns,",")+")"+" VALUES "+DBUtils.generatePlaceHolders(columns));
+		return c.prepareStatement("INSERT INTO "+table+" ("+StringUtils.join(columns,",")+")"+" VALUES "+DBUtils.generatePlaceHolders(columns));
 	}
 
 

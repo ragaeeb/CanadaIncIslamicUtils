@@ -14,7 +14,7 @@ public class SunnahUtils
 		List<Narration> result = new ArrayList<Narration>( narrations.size() );
 		result.addAll(narrations);
 
-		if (!idBased) {
+		if (idBased) {
 			Collections.sort(result);
 		} else {
 			Collections.sort(result, new Comparator<Narration>()

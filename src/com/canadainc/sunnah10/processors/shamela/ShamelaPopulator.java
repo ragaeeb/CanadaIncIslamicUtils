@@ -71,11 +71,11 @@ public class ShamelaPopulator
 			for (Object o: arr)
 			{
 				JSONObject json = (JSONObject)o;
-				
+
 				if (json == null) {
-					System.err.println("Invalid JSON: "+rs.getString("file_name"));
-				}
-				
+					System.err.println("Invalid JSON: "+rs.getString("file_name")+"; "+rs.getInt("id"));
+				}			
+
 				boolean process = m_processor.preprocess(json);
 
 				if (process)
@@ -113,24 +113,17 @@ public class ShamelaPopulator
 
 		System.out.println("Creating database...");			
 
-		List<String> columns = DBUtils.createNullColumns( DBUtils.createNotNullColumns("id INTEGER", "ar_id INTEGER", "ar_body TEXT"), "en_body TEXT", "translation_src TEXT", "commentary TEXT", "chapter_number INTEGER", "chapter_name TEXT", "book_number INTEGER", "book_name TEXT" );
+		List<String> columns = DBUtils.createNullColumns( DBUtils.createNotNullColumns("id INTEGER", "collection TEXT", "ar_id INTEGER", "ar_body TEXT"), "en_body TEXT", "translation_src TEXT", "commentary TEXT", "chapter_number INTEGER", "chapter_name TEXT", "book_number INTEGER", "book_name TEXT", "grading TEXT" );
 		DBUtils.createTable(c, TABLE_NAME, columns);		
-		PreparedStatement ps = c.prepareStatement("INSERT INTO "+TABLE_NAME+" VALUES "+DBUtils.generatePlaceHolders(columns));
+		PreparedStatement ps = DBUtils.createInsert(c, TABLE_NAME, DBUtils.filterNullable(columns));
 
 		for (Narration n: m_processor.getNarrations())
 		{
 			int i = 0;
 
-			ps.setInt(++i, n.id);
+			ps.setString(++i, m_collection);
 			ps.setInt(++i, n.id);
 			ps.setString(++i, n.text.trim());
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
-			ps.setNull(++i, Types.OTHER);
 
 			ps.execute();
 		}
