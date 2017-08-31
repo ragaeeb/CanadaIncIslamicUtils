@@ -14,7 +14,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
 import com.canadainc.common.text.TextUtils;
-import com.canadainc.sunnah10.processors.Processor;
 import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
 import com.canadainc.sunnah10.processors.shamela.ShamelaPopulator;
 import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
@@ -47,13 +46,13 @@ public class NarrationSearcher
 
 		ShamelaPopulator sp = new ShamelaPopulator(collection, path, p);
 		Map<Integer, String> results = p.getResults();
-		
+
 		while ( results.isEmpty() )
 		{
 			System.out.println("Enter query:");
 			p.setQuery( scanIn.nextLine().trim() );
 			sp.process(c);
-			
+
 			if ( results.isEmpty() ) {
 				System.out.println("No matches...");
 			}
@@ -125,6 +124,7 @@ public class NarrationSearcher
 		@Override
 		public void process(List<Node> nodes, JSONObject json)
 		{
+
 			ArrayList<String> result = new ArrayList<>();
 
 			for (Node e: nodes)
@@ -144,12 +144,12 @@ public class NarrationSearcher
 			}
 		}
 	}
-	
+
 	private class MatchData
 	{
 		private String matched = new String();
 		private Set<Integer> matchIndices = new HashSet<>();
-		
+
 		public int getMatchStart() {
 			Integer[] arr = matchIndices.toArray( new Integer[matchIndices.size()] );
 			return arr[0];

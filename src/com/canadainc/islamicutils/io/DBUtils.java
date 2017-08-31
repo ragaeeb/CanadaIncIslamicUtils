@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -21,13 +20,18 @@ public class DBUtils
 	private static final String SUFFIX_PRIMARY_KEY = " PRIMARY KEY";
 
 
-	public static void createTable(Connection c, String table, Collection<String> columns) throws SQLException
+	public static void createTable(Connection c, String table, Collection<String> columns) throws SQLException {
+		execStatement(c, "CREATE TABLE IF NOT EXISTS "+table+" ("+StringUtil.join(columns, ",")+")");
+	}
+
+	
+	private static final void execStatement(Connection c, String query) throws SQLException
 	{
-		PreparedStatement ps = c.prepareStatement("CREATE TABLE IF NOT EXISTS "+table+" ("+StringUtil.join(columns, ",")+")");
+		PreparedStatement ps = c.prepareStatement(query);
 		ps.execute();
 		ps.close();
 	}
-
+	
 
 	public static List<String> isolateColumnNames(List<String> columns, String... toRemove)
 	{
@@ -109,10 +113,13 @@ public class DBUtils
 	}
 	
 	
-	public static PreparedStatement createInsert(Connection c, String table, List<String> columns) throws SQLException
-	{
-		System.out.println("INSERT INTO "+table+" ("+StringUtils.join(columns,",")+")"+" VALUES "+DBUtils.generatePlaceHolders(columns));
+	public static PreparedStatement createInsert(Connection c, String table, List<String> columns) throws SQLException {
 		return c.prepareStatement("INSERT INTO "+table+" ("+StringUtils.join(columns,",")+")"+" VALUES "+DBUtils.generatePlaceHolders(columns));
+	}
+	
+	
+	public static void attach(Connection c, String file, String name) throws SQLException {
+		execStatement(c, "ATTACH DATABASE '"+file+"' AS "+name);
 	}
 
 

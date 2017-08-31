@@ -89,7 +89,7 @@ public class ShamelaTypoProcessor
 		if ( m_ignored != null && ArrayUtils.contains(m_ignored, pageNumber) ) {
 			return null;
 		}
-
+		
 		Collection<Typo> typos = m_typos.get(pageNumber);
 
 		if (typos != null)

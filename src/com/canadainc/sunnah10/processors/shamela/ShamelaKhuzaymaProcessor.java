@@ -8,16 +8,26 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaStandardProcessor extends AbstractShamelaProcessor
+public class ShamelaKhuzaymaProcessor extends AbstractShamelaProcessor
 {
+	public ShamelaKhuzaymaProcessor()
+	{
+		m_typos.add(1703, "1068 -<br /><br />", "");
+		m_typos.prependHadithNumber(3745,2264);
+		m_typos.prependHadithNumber(4136,2497);
+		m_typos.add(2770, "1693 قال الأعظمي: إسناده صحيح", "");
+	}
+
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
 		Narration n = null;
 
-		for (Node e: nodes)
+		for (int i = 0; i < nodes.size(); i++)
 		{
-			if ( ShamelaUtils.isHadithNumberNode(e) ) {
+			Node e = nodes.get(i);
+
+			if ( ShamelaUtils.isHadithNumberNode(e) && ShamelaUtils.isHadithNumberValid(e, m_narrations, n) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
@@ -26,7 +36,11 @@ public class ShamelaStandardProcessor extends AbstractShamelaProcessor
 					n.text += body;
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
-				n.text += ShamelaUtils.extractText(e);
+				String signature = ShamelaUtils.extractText(e);
+
+				if ( signature.equals("[التعليق]") ) {
+					i += 2;
+				}
 			}
 		}
 

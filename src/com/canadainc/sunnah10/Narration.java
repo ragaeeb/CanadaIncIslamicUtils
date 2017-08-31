@@ -105,8 +105,8 @@ public class Narration implements Comparable<Narration>
 
 	@Override
 	public String toString() {
-		return "Narration [id=" + id + ", chapter=" + chapter + ", book=" + book + ", part=" + part + ", hadithNumber="
-				+ hadithNumber + ", inBookNumber=" + inBookNumber + ", text=" + text + ", grading=" + grading + "]";
+		return "Narration [id=" + id + ", hadithNumber="
+				+ hadithNumber/* + ", inBookNumber=" + inBookNumber + ", text=" + text + ", grading=" + grading + "]"*/;
 	}
 
 	@Override

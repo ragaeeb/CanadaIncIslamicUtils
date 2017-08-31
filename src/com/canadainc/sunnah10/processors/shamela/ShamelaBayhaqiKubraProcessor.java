@@ -8,8 +8,13 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public class ShamelaStandardProcessor extends AbstractShamelaProcessor
+public class ShamelaBayhaqiKubraProcessor extends AbstractShamelaProcessor
 {
+
+	public ShamelaBayhaqiKubraProcessor()
+	{
+	}
+
 	@Override
 	public void process(List<Node> nodes, JSONObject json)
 	{
@@ -18,7 +23,11 @@ public class ShamelaStandardProcessor extends AbstractShamelaProcessor
 		for (Node e: nodes)
 		{
 			if ( ShamelaUtils.isHadithNumberNode(e) ) {
-				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
+				Node next = e.nextSibling();
+				
+				if ( !ShamelaUtils.isTitleSpan(next) && !next.toString().startsWith("بَاب") ) {
+					n = ShamelaUtils.createNewNarration(n, e, m_narrations);
+				}
 			} else if ( ShamelaUtils.isTextNode(e) ) {
 				String body = ((TextNode)e).text();
 

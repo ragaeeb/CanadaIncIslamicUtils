@@ -33,10 +33,8 @@ public class ShamelaIbnMajahVowelledProcessor extends AbstractShamelaProcessor
 				int number = ShamelaUtils.parseHadithNumber(e);
 
 				if (!m_narrations.isEmpty() && ( number == getPrev().id ) ) {
-					//System.out.println("***"+number);
 					n = getPrev();
 				} else if (n != null && n.id == number) {
-					System.out.println("<<"+number);
 					// part of the same narration, keep going
 				} else {
 					n = ShamelaUtils.createNewNarration(n, number, m_narrations);
@@ -50,8 +48,6 @@ public class ShamelaIbnMajahVowelledProcessor extends AbstractShamelaProcessor
 					n.text += body;
 				} else if ( !m_narrations.isEmpty() ) {
 					getPrev().text += " "+body;
-					//System.out.println(">>>"+getPrev().id);
-					//System.out.println(">>>>>"+body);
 				}
 			} else if ( ShamelaUtils.isTitleSpan(e) ) {
 				String chapter = ShamelaUtils.extractText(e);

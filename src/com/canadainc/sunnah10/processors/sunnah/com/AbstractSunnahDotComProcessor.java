@@ -32,13 +32,13 @@ public class AbstractSunnahDotComProcessor implements Processor
 	public boolean preprocess(JSONObject json) {
 		return m_typos.process(json, this);
 	}
-	
-	
+
+
 	protected void setCollectGrade(boolean value) {
 		m_collectGrade = value;
 	}
-	
-	
+
+
 	public void process(Narration n) {
 		m_narrations.add(n);
 	}
@@ -58,16 +58,16 @@ public class AbstractSunnahDotComProcessor implements Processor
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");
-		
+
 		if (m_collectGrade) {
 			n.grading = (String)extractAvailable(GRADE_FIELDS, json);
 		}
 
 		n.commentary = (String)json.get("annotations");
-		
+
 		String translationValue = extractAvailable(TRANSLATION_KEYS, json);
 		int translationId = !translationValue.isEmpty() ? Integer.parseInt( translationValue ) : 0;
-		
+
 		if (translationId > 0) {
 			m_idToTranslation.put(n.id, translationId);
 		} else {
@@ -125,8 +125,8 @@ public class AbstractSunnahDotComProcessor implements Processor
 
 		return result;
 	}
-	
-	
+
+
 	public Map<Integer,Integer> getTranslations() {
 		return m_idToTranslation;
 	}

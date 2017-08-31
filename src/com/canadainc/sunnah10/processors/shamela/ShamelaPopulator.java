@@ -5,22 +5,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.canadainc.common.text.TextUtils;
 import com.canadainc.islamicutils.io.DBUtils;
 import com.canadainc.sunnah10.Narration;
 import com.canadainc.sunnah10.processors.Processor;
+import com.canadainc.sunnah10.utils.SunnahUtils;
 
 public class ShamelaPopulator
 {
 	private String m_collection;
 	private String m_path;
-	private Processor m_processor;
+	protected Processor m_processor;
 	private static final String TABLE_NAME = "narrations";
+	private static final String TARGET_DB_NAME = "target";
 
 	public ShamelaPopulator(String collection, Processor processor)
 	{
@@ -109,21 +113,34 @@ public class ShamelaPopulator
 
 	public void write(Connection c) throws SQLException
 	{
-		c.setAutoCommit(false);
+		c.setAutoCommit(true);
 
 		System.out.println("Creating database...");			
 
-		List<String> columns = DBUtils.createNullColumns( DBUtils.createNotNullColumns("id INTEGER", "collection TEXT", "ar_id INTEGER", "ar_body TEXT"), "en_body TEXT", "translation_src TEXT", "commentary TEXT", "chapter_number INTEGER", "chapter_name TEXT", "book_number INTEGER", "book_name TEXT", "grading TEXT" );
-		DBUtils.createTable(c, TABLE_NAME, columns);		
-		PreparedStatement ps = DBUtils.createInsert(c, TABLE_NAME, DBUtils.filterNullable(columns));
+		DBUtils.attach(c, m_collection+".db", TARGET_DB_NAME);
+		
+		c.setAutoCommit(false);
+		
+		List<String> columns = DBUtils.createNullColumns( DBUtils.createNotNullColumns("id INTEGER", "arabic_vowelled TEXT", "arabic_plain TEXT"), "indexed_number INTEGER", "translation TEXT", "translation_src TEXT", "commentary TEXT", "grading TEXT", "page_number INTEGER" );
+		DBUtils.createTable(c, TARGET_DB_NAME+"."+TABLE_NAME, columns);		
+		PreparedStatement ps = DBUtils.createInsert(c, TARGET_DB_NAME+"."+TABLE_NAME, Arrays.asList("indexed_number", "arabic_vowelled", "arabic_plain", "page_number", "grading"));
 
-		for (Narration n: m_processor.getNarrations())
+		List<Narration> narrations = SunnahUtils.sort(m_processor.getNarrations(), true);
+		
+		for (Narration n: narrations)
 		{
 			int i = 0;
 
-			ps.setString(++i, m_collection);
 			ps.setInt(++i, n.id);
 			ps.setString(++i, n.text.trim());
+			ps.setString(++i, TextUtils.normalize(n.text.trim()));
+			DBUtils.setNullInt(++i, n.pageNumber, ps);
+
+			if ( n.grading == null || n.grading.trim().isEmpty() ) {
+				ps.setNull(++i, Types.OTHER);
+			} else {
+				ps.setString(++i, n.grading.trim());
+			}
 
 			ps.execute();
 		}
