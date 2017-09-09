@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.canadainc.islamicutils.io.DBUtils;
+import com.canadainc.common.io.DBUtils;
 
 /**
  * @author rhaq

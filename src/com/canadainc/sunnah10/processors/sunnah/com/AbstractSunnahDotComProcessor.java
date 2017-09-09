@@ -25,17 +25,11 @@ public class AbstractSunnahDotComProcessor implements Processor
 	protected final ArrayList<Narration> m_narrations = new ArrayList<>();
 	protected final SunnahTypoProcessor m_typos = new SunnahTypoProcessor();
 	private Map<Integer,Integer> m_idToTranslation = new HashMap<>();
-	private boolean m_collectGrade;
 
 
 	@Override
 	public boolean preprocess(JSONObject json) {
 		return m_typos.process(json, this);
-	}
-
-
-	protected void setCollectGrade(boolean value) {
-		m_collectGrade = value;
 	}
 
 
@@ -58,10 +52,7 @@ public class AbstractSunnahDotComProcessor implements Processor
 		n.hadithNumber = (String)json.get("hadithNumber");
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");
-
-		if (m_collectGrade) {
-			n.grading = (String)extractAvailable(GRADE_FIELDS, json);
-		}
+		n.grading = (String)extractAvailable(GRADE_FIELDS, json);
 
 		n.commentary = (String)json.get("annotations");
 

@@ -17,8 +17,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.canadainc.common.io.DBUtils;
 import com.canadainc.common.io.IOUtils;
-import com.canadainc.islamicutils.io.DBUtils;
 
 public class JsonToSqliteConverter
 {

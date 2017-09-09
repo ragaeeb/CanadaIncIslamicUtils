@@ -7,7 +7,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.canadainc.islamicutils.io.DBUtils;
+import com.canadainc.common.io.DBUtils;
 
 public class SilsilaSahihaTable implements SunnahPrimaryTable<Narration>
 {

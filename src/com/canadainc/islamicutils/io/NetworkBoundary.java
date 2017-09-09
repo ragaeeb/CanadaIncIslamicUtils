@@ -7,6 +7,7 @@ public class NetworkBoundary
 {
 	public static String getHTML(String urlToRead)
 	{
+		System.out.println(urlToRead);
 		URL url;
 		HttpURLConnection conn;
 		BufferedReader rd;

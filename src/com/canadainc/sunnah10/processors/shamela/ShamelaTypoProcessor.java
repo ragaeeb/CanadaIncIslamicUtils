@@ -20,6 +20,15 @@ public class ShamelaTypoProcessor
 	public void add(int pageNumber, String value, String replacement) {
 		addTypo(pageNumber, new Typo(value, replacement) );
 	}
+	
+	public void highlight(int pageNumber, int index) {
+		add(pageNumber, String.valueOf(index), decorateContent( String.valueOf(index) ));
+	}
+	
+	
+	public void removeBlank(int pageNumber, int index) {
+		add(pageNumber, String.valueOf(index)+" -<br /><br />", "");
+	}
 
 
 	public void add(int pageNumber, String value) {
@@ -68,6 +77,13 @@ public class ShamelaTypoProcessor
 	public void prependHadithNumber(int pageNumber, int hadithNumber) {
 		addTypo( pageNumber, new Typo(decorateContent( String.valueOf(hadithNumber) ), null, TypoType.Prepend) );
 	}
+	
+	public void prependConditionalIndex(int fromPage, int toPage, int hadithNumber, String match)
+	{
+		for (int i = fromPage; i <= toPage; i++) {
+			addTypo( i, new Typo(match, null, TypoType.ConditionalIndex) );
+		}
+	}
 
 
 	public static final String decorateContent(String inner) {
@@ -109,7 +125,9 @@ public class ShamelaTypoProcessor
 					String hadeeth = content.substring(start, end).replaceAll("<br />", "").replaceAll( decorate(typo.inner), typo.replacement );
 					String ending = content.substring(end);
 					content = beginning+hadeeth+ending;
-				}
+				} else if (typo.type == TypoType.ConditionalIndex && content.startsWith(typo.value)) {
+					content = typo.value+content;
+				} 
 			}
 		}
 
@@ -236,6 +254,6 @@ public class ShamelaTypoProcessor
 	}
 
 	public enum TypoType {
-		Prepend, Regex, Stripper
+		ConditionalIndex, Prepend, Regex, Stripper
 	}
 }

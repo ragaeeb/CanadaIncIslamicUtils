@@ -15,6 +15,7 @@ import org.jsoup.nodes.TextNode;
 
 import com.canadainc.common.text.TextUtils;
 import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+import com.canadainc.sunnah10.processors.shamela.DatabasePopulator;
 import com.canadainc.sunnah10.processors.shamela.ShamelaPopulator;
 import com.canadainc.sunnah10.processors.shamela.ShamelaUtils;
 
@@ -44,7 +45,7 @@ public class NarrationSearcher
 			collection = key.substring(0, index);
 		}
 
-		ShamelaPopulator sp = new ShamelaPopulator(collection, path, p);
+		DatabasePopulator sp = new ShamelaPopulator(collection, path, p);
 		Map<Integer, String> results = p.getResults();
 
 		while ( results.isEmpty() )

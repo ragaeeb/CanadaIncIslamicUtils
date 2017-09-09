@@ -10,6 +10,7 @@ public class Narration implements Comparable<Narration>
 	public int inBookNumber;
 	public String text;
 	public String grading;
+	public String translation;
 	public String commentary = new String();
 	public int pageNumber;
 	public int translator;
@@ -49,6 +50,7 @@ public class Narration implements Comparable<Narration>
 		n.inBookNumber = this.inBookNumber;
 		n.pageNumber = this.pageNumber;
 		n.text = this.text;
+		n.translation = this.translation;
 
 		if (this.part != null) {
 			n.part = new Book(this.part);
@@ -177,6 +179,16 @@ public class Narration implements Comparable<Narration>
 				return false;
 			}
 		} else if (!grading.equals(other.grading))
+		{
+			return false;
+		}
+		if (translation == null)
+		{
+			if (other.translation != null)
+			{
+				return false;
+			}
+		} else if (!translation.equals(other.translation))
 		{
 			return false;
 		}

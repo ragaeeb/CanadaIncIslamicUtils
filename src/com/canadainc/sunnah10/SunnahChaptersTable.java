@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.canadainc.islamicutils.io.DBUtils;
+import com.canadainc.common.io.DBUtils;
 
 public class SunnahChaptersTable implements SunnahPrimaryTable<Chapter>
 {

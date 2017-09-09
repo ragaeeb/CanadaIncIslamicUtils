@@ -18,8 +18,8 @@ import java.util.Set;
 
 import org.sqlite.util.StringUtils;
 
+import com.canadainc.common.io.DBUtils;
 import com.canadainc.common.io.IOUtils;
-import com.canadainc.islamicutils.io.DBUtils;
 import com.canadainc.sunnah10.Narration;
 
 public class PlainTextParser

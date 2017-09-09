@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import com.canadainc.islamicutils.io.DBUtils;
+import com.canadainc.common.io.DBUtils;
 
 public class SunnahNarrationsTable implements SunnahTable
 {

@@ -11,8 +11,9 @@ import java.util.List;
 
 import org.jsoup.helper.StringUtil;
 
+import com.canadainc.common.io.DBUtils;
 import com.canadainc.common.io.IOUtils;
-import com.canadainc.islamicutils.io.DBUtils;
+import com.canadainc.islamicutils.io.NetworkBoundary;
 
 public class FileSystemCollector
 {
@@ -33,6 +34,25 @@ public class FileSystemCollector
 				return name.endsWith(".txt");
 			}
 		});
+	}
+	
+	
+	public void fixCorruption(Connection connection, int bookId, int ...pages) throws SQLException, IOException
+	{
+		connection.setAutoCommit(false);
+		
+		String table = new File(m_folder).getName();
+		PreparedStatement ps = connection.prepareStatement("UPDATE "+table+" SET json=?");
+		
+		for (int page: pages)
+		{
+			String json = NetworkBoundary.getHTML("http://shamela.ws/browse.php/book/get_page/"+String.valueOf(bookId)+"/"+String.valueOf(page) );
+			ps.setString(1, json);
+			ps.execute();
+		}
+		
+		connection.commit();
+		ps.close();
 	}
 
 

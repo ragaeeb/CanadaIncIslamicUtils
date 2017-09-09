@@ -5,26 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.canadainc.common.io.DBUtils;
 import com.canadainc.common.text.TextUtils;
-import com.canadainc.islamicutils.io.DBUtils;
 import com.canadainc.sunnah10.Narration;
 import com.canadainc.sunnah10.processors.Processor;
 import com.canadainc.sunnah10.utils.SunnahUtils;
 
-public class ShamelaPopulator
+public class ShamelaPopulator implements DatabasePopulator
 {
+	private static final String TARGET_DB_NAME = "target";
+	private static final String TABLE_NAME = "narrations";
 	private String m_collection;
 	private String m_path;
 	protected Processor m_processor;
-	private static final String TABLE_NAME = "narrations";
-	private static final String TARGET_DB_NAME = "target";
 
 	public ShamelaPopulator(String collection, Processor processor)
 	{
@@ -41,6 +40,10 @@ public class ShamelaPopulator
 	}
 
 
+	/* (non-Javadoc)
+	 * @see com.canadainc.sunnah10.processors.shamela.DatabasePopulator#process(java.sql.Connection)
+	 */
+	@Override
 	public void process(Connection c) throws Exception
 	{
 		String query = "SELECT * FROM "+m_collection;
@@ -111,19 +114,13 @@ public class ShamelaPopulator
 	}
 
 
+	/* (non-Javadoc)
+	 * @see com.canadainc.sunnah10.processors.shamela.DatabasePopulator#write(java.sql.Connection)
+	 */
+	@Override
 	public void write(Connection c) throws SQLException
 	{
-		c.setAutoCommit(true);
-
-		System.out.println("Creating database...");			
-
-		DBUtils.attach(c, m_collection+".db", TARGET_DB_NAME);
-		
-		c.setAutoCommit(false);
-		
-		List<String> columns = DBUtils.createNullColumns( DBUtils.createNotNullColumns("id INTEGER", "arabic_vowelled TEXT", "arabic_plain TEXT"), "indexed_number INTEGER", "translation TEXT", "translation_src TEXT", "commentary TEXT", "grading TEXT", "page_number INTEGER" );
-		DBUtils.createTable(c, TARGET_DB_NAME+"."+TABLE_NAME, columns);		
-		PreparedStatement ps = DBUtils.createInsert(c, TARGET_DB_NAME+"."+TABLE_NAME, Arrays.asList("indexed_number", "arabic_vowelled", "arabic_plain", "page_number", "grading"));
+		PreparedStatement ps = DatabaseUtils.createPopulation(m_collection, c);
 
 		List<Narration> narrations = SunnahUtils.sort(m_processor.getNarrations(), true);
 		
@@ -144,6 +141,8 @@ public class ShamelaPopulator
 
 			ps.execute();
 		}
+		
+		DatabaseUtils.createIndex(c);
 
 		c.commit();
 		ps.close();
