@@ -6,17 +6,15 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
-public abstract class AbstractShamelaProcessor implements ShamelaProcessor
+public class AbstractShamelaProcessor implements ShamelaProcessor
 {
 	protected final ArrayList<Narration> m_narrations = new ArrayList<>();
 	protected final ShamelaTypoProcessor m_typos = new ShamelaTypoProcessor();
-
-	protected AbstractShamelaProcessor()
-	{
-	}
 
 	@Override
 	public final boolean preprocess(JSONObject json)
@@ -42,6 +40,30 @@ public abstract class AbstractShamelaProcessor implements ShamelaProcessor
 		json.put("content", content);
 
 		return true;
+	}
+	
+	
+	@Override
+	public void process(List<Node> nodes, JSONObject json)
+	{
+		Narration n = null;
+
+		for (Node e: nodes)
+		{
+			if ( ShamelaUtils.isHadithNumberNode(e) ) {
+				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
+			} else if ( ShamelaUtils.isTextNode(e) ) {
+				String body = ((TextNode)e).text();
+
+				if (n != null) {
+					n.text += body;
+				}
+			} else if ( ShamelaUtils.isTitleSpan(e) && (n != null) ) {
+				n.text += ShamelaUtils.extractText(e);
+			}
+		}
+
+		ShamelaUtils.appendIfValid(n, m_narrations);
 	}
 
 

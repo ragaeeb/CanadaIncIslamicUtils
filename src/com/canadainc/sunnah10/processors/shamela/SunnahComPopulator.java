@@ -113,12 +113,16 @@ public class SunnahComPopulator implements DatabasePopulator
 
 		for ( int id: arabicIdToNarration.keySet() )
 		{
-			int translationId = idToTranslation.get(id);
-			Narration arabic = arabicIdToNarration.get(id);
-			Narration english = englishIdToNarration.get(translationId);
+			Integer translationId = idToTranslation.get(id);
+			
+			if (translationId != null)
+			{
+				Narration arabic = arabicIdToNarration.get(id);
+				Narration english = englishIdToNarration.get(translationId);
 
-			arabic.translation = english.text;
-			translated.put(id, arabic);
+				arabic.translation = english.text;
+				translated.put(id, arabic);
+			}
 		}
 
 		for ( int id: englishIdToNarration.keySet() )
@@ -129,6 +133,11 @@ public class SunnahComPopulator implements DatabasePopulator
 			{
 				Narration arabic = arabicIdToNarration.get(arabicId);
 				Narration english = englishIdToNarration.get(id);
+				
+				if (arabic == null) {
+					System.out.println(arabicId);
+				}
+				
 				arabic.translation = english.text;
 
 				translated.put(arabicId, arabic);

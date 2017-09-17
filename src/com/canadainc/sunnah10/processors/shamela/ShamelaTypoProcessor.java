@@ -20,12 +20,12 @@ public class ShamelaTypoProcessor
 	public void add(int pageNumber, String value, String replacement) {
 		addTypo(pageNumber, new Typo(value, replacement) );
 	}
-	
+
 	public void highlight(int pageNumber, int index) {
 		add(pageNumber, String.valueOf(index), decorateContent( String.valueOf(index) ));
 	}
-	
-	
+
+
 	public void removeBlank(int pageNumber, int index) {
 		add(pageNumber, String.valueOf(index)+" -<br /><br />", "");
 	}
@@ -77,7 +77,11 @@ public class ShamelaTypoProcessor
 	public void prependHadithNumber(int pageNumber, int hadithNumber) {
 		addTypo( pageNumber, new Typo(decorateContent( String.valueOf(hadithNumber) ), null, TypoType.Prepend) );
 	}
-	
+
+	public void clearAfter(int pageNumber, String match) {
+		addTypo(pageNumber, new Typo(match, null, TypoType.ClearAfter));
+	}
+
 	public void prependConditionalIndex(int fromPage, int toPage, int hadithNumber, String match)
 	{
 		for (int i = fromPage; i <= toPage; i++) {
@@ -105,7 +109,7 @@ public class ShamelaTypoProcessor
 		if ( m_ignored != null && ArrayUtils.contains(m_ignored, pageNumber) ) {
 			return null;
 		}
-		
+
 		Collection<Typo> typos = m_typos.get(pageNumber);
 
 		if (typos != null)
@@ -127,7 +131,13 @@ public class ShamelaTypoProcessor
 					content = beginning+hadeeth+ending;
 				} else if (typo.type == TypoType.ConditionalIndex && content.startsWith(typo.value)) {
 					content = typo.value+content;
-				} 
+				} else if (typo.type == TypoType.ClearAfter) {
+					int start = content.indexOf(typo.value);
+					
+					if (start >= 0) {
+						content = content.substring( 0, start+typo.value.length() ).trim();
+					}
+				}
 			}
 		}
 
@@ -254,6 +264,6 @@ public class ShamelaTypoProcessor
 	}
 
 	public enum TypoType {
-		ConditionalIndex, Prepend, Regex, Stripper
+		ClearAfter, ConditionalIndex, Prepend, Regex, Stripper
 	}
 }

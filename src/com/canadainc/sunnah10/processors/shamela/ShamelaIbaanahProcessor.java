@@ -9,7 +9,8 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaIbaanahProcessor extends AbstractShamelaProcessor
 {
-	private ShamelaStandardProcessor m_processor = new ShamelaStandardProcessor();
+	private ShamelaProcessor m_processor = new AbstractShamelaProcessor();
+
 	private int m_counter;
 
 	@Override

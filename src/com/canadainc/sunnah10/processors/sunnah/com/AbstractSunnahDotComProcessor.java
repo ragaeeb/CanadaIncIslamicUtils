@@ -25,7 +25,7 @@ public class AbstractSunnahDotComProcessor implements Processor
 	protected final ArrayList<Narration> m_narrations = new ArrayList<>();
 	protected final SunnahTypoProcessor m_typos = new SunnahTypoProcessor();
 	private Map<Integer,Integer> m_idToTranslation = new HashMap<>();
-
+	
 
 	@Override
 	public boolean preprocess(JSONObject json) {
@@ -35,6 +35,14 @@ public class AbstractSunnahDotComProcessor implements Processor
 
 	public void process(Narration n) {
 		m_narrations.add(n);
+	}
+	
+	
+	public AbstractSunnahDotComProcessor()
+	{
+		m_typos.fixHadithNumber(1704100, 415);
+		m_typos.fixHadithNumber(1706820, 687);
+		m_typos.fixHadithNumber(1710315, 1041);
 	}
 
 
@@ -53,7 +61,6 @@ public class AbstractSunnahDotComProcessor implements Processor
 		n.inBookNumber = readInt(json, "ourHadithNumber");
 		n.text = (String)json.get("hadithText");
 		n.grading = (String)extractAvailable(GRADE_FIELDS, json);
-
 		n.commentary = (String)json.get("annotations");
 
 		String translationValue = extractAvailable(TRANSLATION_KEYS, json);

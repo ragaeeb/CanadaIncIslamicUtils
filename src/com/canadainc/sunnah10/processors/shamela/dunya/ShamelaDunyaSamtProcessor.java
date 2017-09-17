@@ -1,6 +1,8 @@
-package com.canadainc.sunnah10.processors.shamela;
+package com.canadainc.sunnah10.processors.shamela.dunya;
 
-public class ShamelaDunyaSamtProcessor extends ShamelaStandardProcessor
+import com.canadainc.sunnah10.processors.shamela.AbstractShamelaProcessor;
+
+public class ShamelaDunyaSamtProcessor extends AbstractShamelaProcessor
 {
 	public ShamelaDunyaSamtProcessor()
 	{

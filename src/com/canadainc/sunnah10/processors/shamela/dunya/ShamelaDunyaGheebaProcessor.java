@@ -1,4 +1,6 @@
-package com.canadainc.sunnah10.processors.shamela;
+package com.canadainc.sunnah10.processors.shamela.dunya;
+
+import com.canadainc.sunnah10.processors.shamela.ShamelaContinuedProcessor;
 
 public class ShamelaDunyaGheebaProcessor extends ShamelaContinuedProcessor
 {

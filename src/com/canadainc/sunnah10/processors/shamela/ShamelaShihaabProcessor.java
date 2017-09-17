@@ -1,6 +1,6 @@
 package com.canadainc.sunnah10.processors.shamela;
 
-public class ShamelaShihaabProcessor extends ShamelaStandardProcessor
+public class ShamelaShihaabProcessor extends AbstractShamelaProcessor
 {
 	public ShamelaShihaabProcessor()
 	{

@@ -31,6 +31,6 @@ public class SunnahUtils
 	
 	
 	public static int parseHadithNumber(Narration n) {
-		return Integer.parseInt(n.hadithNumber.replaceAll("[\\sa-z]+", ""));
+		return Integer.parseInt(n.hadithNumber.replaceAll("[\\sa-z,]+", ""));
 	}
 }
