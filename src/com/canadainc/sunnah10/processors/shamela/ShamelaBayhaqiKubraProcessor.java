@@ -10,9 +10,13 @@ import com.canadainc.sunnah10.Narration;
 
 public class ShamelaBayhaqiKubraProcessor extends AbstractShamelaProcessor
 {
-
 	public ShamelaBayhaqiKubraProcessor()
 	{
+		m_typos.prependHadithNumber(7025, 6146);
+		m_typos.prependHadithNumber(6657, 5850);
+		m_typos.add(18804, "16486", "16468");
+		m_typos.prependHadithNumber(20891, 18375);
+		m_typos.add(24399, "21552 - </span>وَعَنْ ع", "21553 - </span>وَعَنْ ع");
 	}
 
 	@Override

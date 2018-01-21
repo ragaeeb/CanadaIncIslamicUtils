@@ -7,7 +7,6 @@ import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 
 import com.canadainc.sunnah10.Narration;
 
@@ -53,7 +52,7 @@ public class AbstractShamelaProcessor implements ShamelaProcessor
 			if ( ShamelaUtils.isHadithNumberNode(e) ) {
 				n = ShamelaUtils.createNewNarration(n, e, m_narrations);
 			} else if ( ShamelaUtils.isTextNode(e) ) {
-				String body = ((TextNode)e).text();
+				String body = e.toString();
 
 				if (n != null) {
 					n.text += body;
@@ -92,11 +91,6 @@ public class AbstractShamelaProcessor implements ShamelaProcessor
 
 	@Override
 	public int getPageNumber(JSONObject json) {
-
-		if (json.get("pid") == null) {
-			System.out.println(json);
-		}
-		
 		return Integer.parseInt( json.get("pid").toString() );
 	}
 

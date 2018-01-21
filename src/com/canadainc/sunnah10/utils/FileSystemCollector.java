@@ -5,8 +5,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 import org.jsoup.helper.StringUtil;
@@ -35,23 +35,47 @@ public class FileSystemCollector
 			}
 		});
 	}
-	
-	
+
+
 	public void fixCorruption(Connection connection, int bookId, int ...pages) throws SQLException, IOException
 	{
 		connection.setAutoCommit(false);
-		
+
 		String table = new File(m_folder).getName();
 		PreparedStatement ps = connection.prepareStatement("UPDATE "+table+" SET json=?");
-		
+
 		for (int page: pages)
 		{
 			String json = NetworkBoundary.getHTML("http://shamela.ws/browse.php/book/get_page/"+String.valueOf(bookId)+"/"+String.valueOf(page) );
 			ps.setString(1, json);
 			ps.execute();
 		}
-		
+
 		connection.commit();
+		ps.close();
+	}
+	
+	
+	public void exportTables(Connection connection) throws SQLException
+	{
+		PreparedStatement ps = connection.prepareStatement("SELECT name FROM sqlite_master WHERE type='table'");
+		ResultSet rs = ps.executeQuery();
+		
+		while ( rs.next() )
+		{
+			String table = rs.getString(1);
+			DBUtils.attach(connection, table+".db", "target");
+			
+			PreparedStatement createTable = connection.prepareStatement("CREATE TABLE target.raw (id INTEGER PRIMARY KEY, file_name TEXT, json TEXT);");
+			PreparedStatement insert = connection.prepareStatement("INSERT INTO target.raw SELECT id,file_name,json FROM "+table+" ORDER BY id;");
+			
+			createTable.close();
+			insert.close();
+			
+			DBUtils.detach(connection, "target");
+		}
+		
+		rs.close();
 		ps.close();
 	}
 
@@ -59,11 +83,10 @@ public class FileSystemCollector
 	public void writeToDB(Connection connection) throws SQLException, IOException
 	{
 		connection.setAutoCommit(false);
-		
+
 		List<String> columns = DBUtils.createNotNullColumns("id INTEGER", "file_name TEXT", "json TEXT");
-		DBUtils.createNullColumns(columns, "path TEXT");
-		
-		String table = new File(m_folder).getName();
+
+		String table = "raw";
 		DBUtils.createTable(connection, table, columns);
 
 		DBUtils.isolateColumnNames(columns, "id");
@@ -71,17 +94,9 @@ public class FileSystemCollector
 
 		for (File f: m_result)
 		{
-			String parentPath = f.getParent().substring( m_folder.length() ).trim();
-			
 			int i = 0;
 			ps.setString(++i, f.getName());
 			ps.setString(++i, IOUtils.readFileUtf8(f));
-			
-			if ( !parentPath.isEmpty() ) {
-				ps.setString(++i, parentPath);
-			} else {
-				ps.setNull(++i, Types.OTHER);
-			}
 
 			ps.execute();
 		}

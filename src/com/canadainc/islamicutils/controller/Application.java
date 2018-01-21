@@ -5,9 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,10 +16,6 @@ import com.canadainc.quran10.QuranPopulator;
 import com.canadainc.quran10.Transliterator;
 import com.canadainc.quran10.ibnkatheer.DirectoryAnalyzer;
 import com.canadainc.quran10.ibnkatheer.TafsirController;
-import com.canadainc.sunnah10.SunnahAdminDatabase;
-import com.canadainc.sunnah10.SunnahConstants;
-import com.canadainc.sunnah10.SunnahPopulator;
-import com.canadainc.sunnah10.Tahqeeq;
 
 public class Application
 {
@@ -57,50 +51,6 @@ public class Application
 	}
 
 
-	public static void testHadith()
-	{
-		try {
-			Class.forName("org.sqlite.JDBC"); // load the sqlite-JDBC driver using the current class loader
-
-			File english = new File("/Users/rhaq/workspace/resources/sunnah.com/sunnah_english.db");
-			english.delete();
-			SunnahPopulator sp = new SunnahPopulator("english", "/Users/rhaq/workspace/resources/sunnah.com");
-			sp.loadData();
-			sp.processAutoGrades();
-			sp.processDatabase();
-			System.out.println("Finished: english\n");
-			sp.close();
-			
-			File arabic = new File("/Users/rhaq/workspace/resources/sunnah.com/sunnah_arabic.db");
-			arabic.delete();
-			SunnahPopulator spArabic = new SunnahPopulator("arabic", "/Users/rhaq/workspace/resources/sunnah.com");
-			
-			Map<String, Tahqeeq> checkings = new HashMap<>();
-			checkings.put(SunnahConstants.COLLECTION_IBN_MAJAH, new Tahqeeq("(سنن ابن ماجة)", "تحقيق الألباني:", SunnahConstants.SHAYKH_AL_ALBAANI_ID) );
-			checkings.put(SunnahConstants.COLLECTION_TIRMIDHI, new Tahqeeq("(سنن الترمذي)", "تحقيق الألباني:", SunnahConstants.SHAYKH_AL_ALBAANI_ID) );
-			checkings.put(SunnahConstants.COLLECTION_NASAI, new Tahqeeq("سنن النسائي", "[حكم الألباني]", SunnahConstants.SHAYKH_AL_ALBAANI_ID) );
-			checkings.put(SunnahConstants.COLLECTION_ABU_DAWUD, new Tahqeeq("صحيح وضعيف سنن أبي داود", "تحقيق الألباني:", SunnahConstants.SHAYKH_AL_ALBAANI_ID) );
-			
-			//spArabic.setTahqeeqFolder("/Users/rhaq/workspace/resources/shamela", checkings);
-			spArabic.loadData();
-			//spArabic.getNarrationCollector().swapHadithNumbersWith(SunnahConstants.COLLECTION_IBN_MAJAH, sp.getNarrationCollector().getCollected().get(SunnahConstants.COLLECTION_IBN_MAJAH));
-			
-			spArabic.processAutoGrades();
-			spArabic.processDatabase();
-			System.out.println("Finished: arabic\n");
-			spArabic.close();
-			
-			File admin = new File("res/sunnah10/sunnah10.db");
-			admin.delete();
-			SunnahAdminDatabase sad = new SunnahAdminDatabase( admin.getPath(), arabic.getPath(), english.getPath() );
-			sad.process();
-			sad.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	public static void testPopulateArabicQuran()
 	{
 		QuranPopulator qap = new QuranPopulator("res/quran10/quran-data.xml", "res/quran10/supplications.csv", "res/quran10/quran_arabic.db", "res/quran10/similar.txt", new String[]{/*"turkish", "russian","malay"*/});
@@ -127,7 +77,6 @@ public class Application
 	public static void main(String[] args)
 	{
 		//testBulugh();
-		testHadith();
 		//testPopulateArabicQuran();
 		//testDownloadAyatImages();
 		/*try

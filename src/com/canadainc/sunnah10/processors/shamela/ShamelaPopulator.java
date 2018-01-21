@@ -19,8 +19,6 @@ import com.canadainc.sunnah10.utils.SunnahUtils;
 
 public class ShamelaPopulator implements DatabasePopulator
 {
-	private static final String TARGET_DB_NAME = "target";
-	private static final String TABLE_NAME = "narrations";
 	private String m_collection;
 	private String m_path;
 	protected Processor m_processor;

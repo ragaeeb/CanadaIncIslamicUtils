@@ -20,6 +20,10 @@ public class ShamelaTypoProcessor
 	public void add(int pageNumber, String value, String replacement) {
 		addTypo(pageNumber, new Typo(value, replacement) );
 	}
+	
+	public void add(int pageNumber, int foundPage, int actualPage) {
+		add(pageNumber, String.valueOf(foundPage), String.valueOf(actualPage));
+	}
 
 	public void highlight(int pageNumber, int index) {
 		add(pageNumber, String.valueOf(index), decorateContent( String.valueOf(index) ));
@@ -77,6 +81,13 @@ public class ShamelaTypoProcessor
 	public void prependHadithNumber(int pageNumber, int hadithNumber) {
 		addTypo( pageNumber, new Typo(decorateContent( String.valueOf(hadithNumber) ), null, TypoType.Prepend) );
 	}
+	
+	public void prependRange(int fromPage, int toPage)
+	{
+		for (int i = fromPage; i <= toPage; i++) {
+			prependHadithNumber(i,i);
+		}
+	}
 
 	public void clearAfter(int pageNumber, String match) {
 		addTypo(pageNumber, new Typo(match, null, TypoType.ClearAfter));
@@ -117,7 +128,9 @@ public class ShamelaTypoProcessor
 			for (Typo typo: typos)
 			{
 				if (typo.type == null) {
+					//System.out.println(content);
 					content = process(content, typo.value, typo.replacement, false);
+					//System.out.println(content);
 				} else if (typo.type == TypoType.Regex) {
 					content = process(content, typo.value, typo.replacement, true);
 				} else if (typo.type == TypoType.Prepend) {

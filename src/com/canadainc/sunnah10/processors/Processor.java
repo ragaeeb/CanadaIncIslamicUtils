@@ -31,19 +31,19 @@ public interface Processor
 	 * @return All the narrations that were processed thus far.
 	 */
 	public List<Narration> getNarrations();
-	
-	
+
+
 	/**
 	 * 
 	 * @param id
 	 * @return
 	 */
 	public boolean hasGrade(int id);
-	
-	
+
+
 	public int getPageNumber(JSONObject json);
-	
-	
+
+
 	/**
 	 * Does any cleanup it needs to.
 	 */
