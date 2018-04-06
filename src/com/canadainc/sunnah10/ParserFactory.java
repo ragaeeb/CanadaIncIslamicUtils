@@ -19,7 +19,6 @@ import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaJaamiProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaSilsilaDaifProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaTaleeqaatHisaanProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaTargheebProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaAbuDawudNoVowelsProcessor;
 import com.canadainc.sunnah10.processors.shamela.shared.ShamelaIbnMajahNoVowelsProcessor;
 import com.canadainc.sunnah10.processors.shamela.shared.ShamelaIbnMajahVowelledProcessor;
 import com.canadainc.sunnah10.processors.shamela.shared.ShamelaSunanNasaiNoVowelsProcessor;
@@ -41,7 +40,6 @@ public class ParserFactory
 		m_keyToProcessor = new HashMap<String, Class<? extends Processor>>();
 		registerCollections(AbstractSunnahDotComProcessor.class, "adab", "abudawud", "malik", "muslim", "nawawi40", "qudsi40", "riyadussaliheen");
 		
-		m_keyToProcessor.put("abudawud_no_vowels", ShamelaAbuDawudNoVowelsProcessor.class);
 		m_keyToProcessor.put("bukhari", BukhariProcessor.class);
 		m_keyToProcessor.put("bayhaqi_kubra", ShamelaBayhaqiKubraProcessor.class);
 		m_keyToProcessor.put("jaami_sagheer_daif", ShamelaJaamiDaifProcessor.class);

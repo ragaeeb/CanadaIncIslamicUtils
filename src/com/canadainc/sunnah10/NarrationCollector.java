@@ -7,14 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.canadainc.sunnah10.utils.Dictionary;
-
 public class NarrationCollector implements Collector
 {
 	/** (Key: Language, Value: [<Key: Collection, Value: Translator>]) */
 	private Map< String, Map<String, List<Integer>> > m_translations;
 
-	private Dictionary m_dictionary;
 	private Map<String, Collection<Narration>> m_narrations;
 	
 	public NarrationCollector()
@@ -89,10 +86,6 @@ public class NarrationCollector implements Collector
 		{
 			toConvert = toConvert.replaceAll("\\(S\\)|\\[SAW\\]|\\([sS]\\.[aA]\\.[wW]\\)|\\(SAW0{0,1}\\)|\\(saws\\)|SAW0|\\({0,1}SWAS\\){0,1}|\\(saW\\)|\\(saas\\)|[pP]\\.[bB]\\.[uU]\\.[hH]\\.{0,1}|pbuh", "ﷺ");
 
-			if (m_dictionary != null) {
-				toConvert = m_dictionary.correctTypos(toConvert);
-			}
-
 			toConvert = toConvert.replaceAll("\\s+", " ");
 			//toConvert = toConvert.replaceAll("\\s{2,}", "");
 
@@ -147,12 +140,6 @@ public class NarrationCollector implements Collector
 			ours.hadithNumber = n.hadithNumber;
 			n.hadithNumber = hadithNumber;
 		}
-	}
-
-
-	@Override
-	public void setDictionary(Dictionary d) {
-		m_dictionary = d;
 	}
 
 

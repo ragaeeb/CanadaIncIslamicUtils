@@ -8,13 +8,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.canadainc.sunnah10.utils.Dictionary;
-
 public class ChapterCollector implements Collector
 {
 	private Set<Chapter> m_chapters;
 	private Pattern chapterPattern;
-	private Dictionary m_dictionary;
 	
 	public ChapterCollector()
 	{
@@ -77,10 +74,6 @@ public class ChapterCollector implements Collector
 				babName = babName.substring( 0, babName.length()-2 )+"?";
 			}
 
-			if (m_dictionary != null) {
-				babName = m_dictionary.correctTypos(babName);
-			}
-
 			n.chapter.number = babNumber;
 		} else {
 			babName = null;
@@ -100,10 +93,5 @@ public class ChapterCollector implements Collector
 	
 	public Collection<Chapter> getCollected() {
 		return m_chapters;
-	}
-
-	@Override
-	public void setDictionary(Dictionary d) {
-		m_dictionary = d;
 	}
 }

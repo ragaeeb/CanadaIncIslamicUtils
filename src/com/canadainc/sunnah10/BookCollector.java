@@ -8,13 +8,10 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.canadainc.sunnah10.utils.Dictionary;
-
 public class BookCollector implements Collector
 {
 	/** (Key: Collection, Value: Book) */
 	private Map<String,Set<Book>> m_bookNames;
-	private Dictionary m_dictionary;
 	private Map<Integer, String> adabArabicBookNames;
 
 	public BookCollector()
@@ -128,12 +125,6 @@ public class BookCollector implements Collector
 			}
 		}
 
-		if (m_dictionary != null) {
-			n.book.name = m_dictionary.correctTypos(bookName).trim();
-		} else {
-			n.book.name = bookName.trim();
-		}
-
 		// 55: Virtues And Merits Of The Prophet (Pbuh)
 		// 60: Prophetic Commentary On The Qur'an (Tafseer Of The Prophet (pbuh)
 		// 38: Setting Free And Wala\'
@@ -186,11 +177,5 @@ public class BookCollector implements Collector
 
 	public Map< String, Set<Book> > getCollected() {
 		return m_bookNames;
-	}
-
-
-	@Override
-	public void setDictionary(Dictionary d) {
-		m_dictionary = d;
 	}
 }
