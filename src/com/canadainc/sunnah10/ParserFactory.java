@@ -19,12 +19,6 @@ import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaJaamiProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaSilsilaDaifProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaTaleeqaatHisaanProcessor;
 import com.canadainc.sunnah10.processors.shamela.albaani.ShamelaTargheebProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaIbnMajahNoVowelsProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaIbnMajahVowelledProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaSunanNasaiNoVowelsProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaSunanNasaiVowelledProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaTirmidhiNoVowelsProcessor;
-import com.canadainc.sunnah10.processors.shamela.shared.ShamelaTirmidhiVowelledProcessor;
 import com.canadainc.sunnah10.processors.sunnah.com.AbstractSunnahDotComProcessor;
 import com.canadainc.sunnah10.processors.sunnah.com.BukhariProcessor;
 import com.canadainc.sunnah10.processors.sunnah.com.IbnMajahProcessor;
@@ -45,12 +39,8 @@ public class ParserFactory
 		m_keyToProcessor.put("jaami_sagheer_daif", ShamelaJaamiDaifProcessor.class);
 		m_keyToProcessor.put("ibaanah_kubra", ShamelaIbaanahProcessor.class);
 		m_keyToProcessor.put("ibnmajah", IbnMajahProcessor.class);
-		m_keyToProcessor.put("ibnmajah_no_vowels", ShamelaIbnMajahNoVowelsProcessor.class);
-		m_keyToProcessor.put("ibnmajah_vowels", ShamelaIbnMajahVowelledProcessor.class);
 		m_keyToProcessor.put("mishkaat_masaabeeh", ShamelaMishkaatMasaabihProcessor.class);
 		m_keyToProcessor.put("nasai", NasaiProcessor.class);
-		m_keyToProcessor.put("nasai_no_vowels", ShamelaSunanNasaiNoVowelsProcessor.class);
-		m_keyToProcessor.put("nasai_vowels", ShamelaSunanNasaiVowelledProcessor.class);
 		m_keyToProcessor.put("saheeh_irwa", ShamelaIrwaProcessor.class);
 		m_keyToProcessor.put("saheeh_jaami", ShamelaJaamiProcessor.class);
 		m_keyToProcessor.put("saheeh_targheeb", ShamelaTargheebProcessor.class);
@@ -61,8 +51,6 @@ public class ParserFactory
 		m_keyToProcessor.put("taleeqat_hisaan", ShamelaTaleeqaatHisaanProcessor.class);
 		m_keyToProcessor.put("tanbeeh_ghafileen", ShamelaContinuedProcessor.class);
 		m_keyToProcessor.put("tirmidhi", TirmidhiProcessor.class);
-		m_keyToProcessor.put("tirmidhi_no_vowels", ShamelaTirmidhiNoVowelsProcessor.class);
-		m_keyToProcessor.put("tirmidhi_vowels", ShamelaTirmidhiVowelledProcessor.class);
 	}
 	
 	private final void registerCollections(Class<? extends Processor> p, String ...collections)
